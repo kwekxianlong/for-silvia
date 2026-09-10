@@ -513,7 +513,9 @@ section { padding-block: var(--section-gap); }
   font-size: 12px;
   color: #d8d2c8;
   padding: 14px 16px calc(28px + env(safe-area-inset-bottom));
+  scrollbar-width: thin;
 }
+.dev__group:last-of-type { margin-bottom: 26px; }
 .dev[hidden] { display: none; }
 .dev h2 { font-size: 12px; letter-spacing: .1em; margin: 0 0 4px; color: #eedbc2; }
 .dev__sub { color: #8d8578; margin: 0 0 16px; line-height: 1.5; }
@@ -530,7 +532,16 @@ section { padding-block: var(--section-gap); }
 .dev__row input[type="range"] { accent-color: #875336; height: 22px; }
 .dev__row input[type="color"] { height: 30px; padding: 0; border: 1px solid #3a352e; background: #14120f; }
 .dev__row select { background: #14120f; color: #d8d2c8; border: 1px solid #3a352e; padding: 5px; }
-.dev__actions { display: grid; gap: 8px; position: sticky; bottom: 0; background: rgba(8,7,6,0.96); padding-top: 10px; }
+.dev__actions {
+  display: grid; gap: 8px;
+  position: sticky; bottom: 0;
+  /* fully opaque + a soft top fade: at 96% the controls scrolling underneath
+     bled through and the boundary read as a glitch */
+  background: #080706;
+  padding-top: 12px;
+  margin-top: 6px;
+  box-shadow: 0 -14px 14px -8px #080706;
+}
 .dev__actions button {
   font-family: var(--font-ui); font-size: 12px;
   color: #eedbc2; background: #1c1712;

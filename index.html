@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0908">
+<title>For Silvia</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-gated">
+
+<!-- Background stack. Purely decorative, hidden from assistive tech. -->
+<div id="bg" aria-hidden="true">
+  <div class="bg__layer bg__blur"  id="bgBlur"></div>
+  <div class="bg__layer bg__sharp" id="bgSharp"></div>
+  <div class="bg__portraits" id="bgPortraits">
+    <img class="bg__portrait" id="bgPortA" alt="" decoding="async">
+    <img class="bg__portrait" id="bgPortB" alt="" decoding="async">
+  </div>
+  <div class="bg__veil"     id="bgVeil"></div>
+  <div class="bg__vignette"></div>
+</div>
+
+<!-- 1. Entry gate. The one user gesture the whole audio story hangs off. -->
+<div class="gate" id="gate">
+  <div class="gate__inner">
+    <p class="gate__line" id="gateLine"></p>
+    <button class="gate__btn" id="gateBtn" type="button"></button>
+    <p class="gate__note" id="gateNote"></p>
+  </div>
+</div>
+
+<noscript>
+  <p style="padding:2rem;color:#eedbc2;font-family:Georgia,serif">
+    This page needs JavaScript to unfold. Please enable it.
+  </p>
+</noscript>
+
+<main class="page" id="page">
+  <!-- 2. Hero -->
+  <section class="hero" id="hero"></section>
+
+  <!-- 3. Typed letter -->
+  <section class="letter-sec" id="letterSec"></section>
+
+  <!-- 4. Portrait gallery -->
+  <section class="gallery" id="gallery"></section>
+
+  <!-- 5. Reasons -->
+  <section class="reasons" id="reasons"></section>
+
+  <!-- 6. Closing + music credit -->
+  <section class="closing" id="closing"></section>
+</main>
+
+<!-- Always-reachable music control -->
+<div class="music" id="music" hidden>
+  <button class="music__btn" id="musicBtn" type="button" aria-pressed="false">
+    <span class="music__icon" id="musicIcon" aria-hidden="true"></span>
+    <span class="music__label" id="musicLabel">Music</span>
+  </button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

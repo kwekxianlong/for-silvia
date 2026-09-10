@@ -1,0 +1,546 @@
+/* ============================================================
+   For Silvia
+   Palette sampled directly from the source painting:
+   86% of its saturated pixels are warm amber/brown, 13.5% rust.
+   The ground is a WARM near-black (#0a0908), not a cool one.
+   ------------------------------------------------------------
+   Every value below marked (tweak) is live-editable from the
+   dev panel (press "d") and exportable with "Copy CSS".
+   ============================================================ */
+
+:root {
+  /* -- colour (tweak) -- */
+  --bg:      #0a0908;   /* warm near-black, the painting's ground   */
+  --umber:   #2d1c12;   /* depth                                    */
+  --rust:    #875336;   /* accent: hairlines, focus, active rule     */
+  --khaki:   #c9b79a;   /* dim text. Lifted from the painting's #917c5d
+                           midtone: a midtone can never contrast against a
+                           midtone backdrop, and measured 1.67:1 once the
+                           veil lifted. This reads dim but stays legible.  */
+  --cream:   #eedbc2;   /* body text, the painting's own highlight   */
+
+  /* -- type (tweak) -- */
+  --font-display: ui-serif, "New York", "Iowan Old Style",
+                  "Palatino Linotype", Palatino, Georgia,
+                  "Times New Roman", serif;
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto,
+             "Helvetica Neue", Arial, sans-serif;
+
+  --fs-base: 17px;
+  --scale:   1.32;
+  --tracking: 0.005em;
+  --leading:  1.72;
+
+  --fs-sm:  calc(var(--fs-base) / var(--scale));
+  --fs-lg:  calc(var(--fs-base) * var(--scale));
+  --fs-xl:  calc(var(--fs-lg)   * var(--scale));
+  --fs-2xl: calc(var(--fs-xl)   * var(--scale));
+  --fs-3xl: calc(var(--fs-2xl)  * var(--scale));
+
+  /* -- rhythm (tweak) -- */
+  --section-gap: 92px;
+  --measure: 560px;
+
+  /* -- motion (tweak) -- */
+  --type-speed:   42;      /* ms per character, read by JS   */
+  --reveal-ms:    700ms;
+  --reveal-ease:  cubic-bezier(.22,.61,.36,1);
+  --crossfade-ms: 1500ms;
+
+  /* -- background treatment (tweak) -- */
+  --veil:       0.50;  /* starting darkness; lifts as reasons reveal   */
+  --veil-end:   0.12;  /* darkness once every reason is revealed       */
+  /* The reading column's scrim moves INVERSELY to the veil. A constant
+     scrim can't work: strong enough for the bright end state makes the
+     opening a black page, weak enough for the opening fails contrast at
+     the end. This keeps the column legible throughout while the painting
+     blooms around it. --scrim is written at runtime; edit the two ends. */
+  --scrim-start: 0.40;
+  --scrim-end:   0.70;
+  --scrim:       0.40;
+  --vignette: 0.52;
+  --bg-blur:  0px;    /* extra runtime blur; 0 by default because a
+                         pre-blurred asset does the base work, which
+                         is far cheaper on mobile GPUs              */
+  --portrait-opacity: 0.42;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  line-height: var(--leading);
+  letter-spacing: var(--tracking);
+  color: var(--cream);
+  background: transparent;
+}
+
+body.is-gated { overflow: hidden; height: 100%; }
+
+::selection { background: var(--rust); color: var(--cream); }
+
+/* ---------- background stack ---------- */
+
+#bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+
+.bg__layer {
+  position: absolute; inset: -2%;      /* bleed, so drift never shows an edge */
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(var(--bg-blur));
+  will-change: transform;
+}
+
+/* Loads immediately: 15 KB, and blur hides its low resolution entirely. */
+.bg__blur { background-image: url("assets/bg-floral-blur.jpg"); }
+
+/* The 1080px file. Deliberately NOT referenced until JS adds .is-loaded,
+   so the heavy asset is fetched only as she nears the reasons section. */
+.bg__sharp { opacity: 0; transition: opacity var(--crossfade-ms) var(--reveal-ease); }
+.bg__sharp.is-loaded {
+  background-image: url("assets/bg-floral.jpg");
+  background-image: image-set(
+    url("assets/bg-floral.webp") type("image/webp"),
+    url("assets/bg-floral.jpg")  type("image/jpeg")
+  );
+}
+
+/* Her portraits crossfade here, feathered so they sit inside the bouquet
+   rather than on top of it. */
+.bg__portraits { position: absolute; inset: 0; }
+.bg__portrait {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  mix-blend-mode: luminosity;
+  transition: opacity var(--crossfade-ms) var(--reveal-ease);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 25%, transparent 72%);
+          mask-image: radial-gradient(ellipse at 50% 40%, #000 25%, transparent 72%);
+}
+
+.bg__veil {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  opacity: var(--veil);
+  transition: opacity var(--crossfade-ms) var(--reveal-ease);
+}
+
+.bg__vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 42%,
+    transparent 28%,
+    rgba(10,9,8, calc(0.55 * var(--vignette))) 70%,
+    rgba(10,9,8, calc(0.94 * var(--vignette))) 100%);
+}
+
+/* Slow drift so the bouquet reads as endless — you never reach an edge. */
+@keyframes drift {
+  0%   { transform: scale(1.06) translate3d(0,0,0); }
+  50%  { transform: scale(1.12) translate3d(-1.2%, -1.6%, 0); }
+  100% { transform: scale(1.06) translate3d(0,0,0); }
+}
+.bg__blur, .bg__sharp { animation: drift 64s ease-in-out infinite; }
+
+/* ---------- entry gate ---------- */
+
+.gate {
+  position: fixed; inset: 0; z-index: 60;
+  display: grid; place-items: center;
+  padding: 32px calc(24px + env(safe-area-inset-right))
+           32px calc(24px + env(safe-area-inset-left));
+  background: rgba(10,9,8,0.78);
+  transition: opacity var(--reveal-ms) var(--reveal-ease),
+              visibility var(--reveal-ms) var(--reveal-ease);
+}
+.gate.is-open { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.gate__inner { text-align: center; max-width: 30ch; }
+
+.gate__line {
+  font-size: var(--fs-lg);
+  line-height: 1.55;
+  color: var(--cream);
+  margin: 0 0 2.2rem;
+  text-wrap: balance;
+}
+
+.gate__btn {
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  font-style: italic;
+  letter-spacing: 0.08em;
+  color: var(--cream);
+  background: transparent;
+  border: 1px solid var(--rust);
+  border-radius: 0;                 /* no soft rounded card look */
+  padding: 15px 42px;
+  cursor: pointer;
+  transition: background var(--reveal-ms) var(--reveal-ease),
+              color var(--reveal-ms) var(--reveal-ease);
+  min-height: 48px;                 /* comfortable tap target */
+}
+.gate__btn:hover, .gate__btn:focus-visible { background: var(--rust); }
+
+.gate__note {
+  font-size: var(--fs-sm);
+  color: var(--khaki);
+  margin: 1.6rem 0 0;
+  font-style: italic;
+}
+
+/* ---------- page shell ---------- */
+
+.page {
+  position: relative; z-index: 1;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 calc(24px + env(safe-area-inset-left))
+           0 calc(24px + env(safe-area-inset-right));
+  opacity: 0;
+  transition: opacity 900ms var(--reveal-ease);
+}
+.page.is-revealed { opacity: 1; }
+
+/* Protects glyphs locally so the painting can stay bright behind them. */
+.page { text-shadow: 0 1px 10px rgba(10,9,8,0.82), 0 0 2px rgba(10,9,8,0.65); }
+
+/* Column scrim. Mandatory, not stylistic: 17% of the painting is bright
+   cream bloom, so unscrimmed text would fail contrast unpredictably.
+   Feathered at the edges — no border, no radius, no shadow. */
+.page::before {
+  content: "";
+  position: absolute; inset: 0;   /* no bleed at phone width: the column IS
+                                     the viewport, so any bleed = h-scroll */
+  z-index: -1;
+  background: rgba(10,9,8, var(--scrim));
+  transition: background-color var(--crossfade-ms) var(--reveal-ease);
+  /* Feather must finish INSIDE the 24px text padding, or the first ~36px of
+     every line sits in an under-protected ramp. 7% of 375px = 26px. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+
+section { padding-block: var(--section-gap); }
+
+/* ---------- hero ---------- */
+
+.hero { padding-top: calc(var(--section-gap) * 0.7); }
+
+.hero__shot { margin: 0 0 2.6rem; }
+
+.hero__name {
+  font-size: var(--fs-3xl);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.9rem;
+}
+
+.hero__line {
+  font-size: var(--fs-base);
+  font-style: italic;
+  color: var(--khaki);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ---------- typed letter ---------- */
+
+.letter {
+  position: relative;
+  margin: 0;
+  font-size: var(--fs-lg);
+  line-height: var(--leading);
+  text-wrap: pretty;
+}
+/* Ghost reserves the paragraph's full height from the first frame, so the
+   page never reflows while typing. */
+.letter__ghost { visibility: hidden; }
+.letter__out   { position: absolute; inset: 0; }
+
+.caret {
+  display: inline-block;
+  width: 1px; height: 1.05em;
+  background: var(--rust);
+  vertical-align: -0.16em;
+  margin-left: 2px;
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.letter.is-done .caret { display: none; }
+
+.letter-skip {
+  display: inline-block;
+  margin-top: 1.8rem;
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--khaki);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(135,83,54,0.5);
+  padding: 6px 2px;
+  cursor: pointer;
+  min-height: 44px;
+}
+.letter-skip[hidden] { display: none; }
+
+/* ---------- gallery ---------- */
+
+.gallery { display: grid; gap: calc(var(--section-gap) * 0.55); }
+
+.shot { margin: 0; }
+
+.shot__frame {
+  position: relative;
+  aspect-ratio: 3 / 4;          /* box is fixed, so huge phone photos crop
+                                   rather than blowing up the layout */
+  overflow: hidden;
+  background: var(--umber);
+}
+
+.shot__frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 800ms var(--reveal-ease);
+}
+.shot__frame img.is-in { opacity: 1; }
+
+.shot figcaption {
+  margin-top: 0.95rem;
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--khaki);
+  line-height: 1.6;
+}
+
+/* ---------- reasons ---------- */
+
+.reasons__intro {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--khaki);
+  margin: 0 0 2.2rem;
+}
+
+.reason {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  line-height: var(--leading);
+  letter-spacing: var(--tracking);
+  color: var(--cream);
+  background: none;
+  border: 0;
+  border-top: 1px solid rgba(238,219,194,0.13);
+  border-left: 2px solid transparent;
+  padding: 26px 0 26px 20px;
+  margin: 0;
+  cursor: pointer;
+  transition: opacity var(--reveal-ms) var(--reveal-ease),
+              border-color var(--reveal-ms) var(--reveal-ease),
+              padding-left var(--reveal-ms) var(--reveal-ease);
+}
+.reasons .reason:last-of-type { border-bottom: 1px solid rgba(238,219,194,0.13); }
+
+.reason__hint {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--khaki);
+}
+
+/* NB: a class rule outranks the UA `[hidden]` rule, so `display:block`
+   here would leak every reason on load. This must stay. */
+.reason__text[hidden] { display: none; }
+
+.reason__text {
+  display: block;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity var(--reveal-ms) var(--reveal-ease),
+              transform var(--reveal-ms) var(--reveal-ease);
+}
+
+.reason[data-state="locked"] { opacity: 0.28; cursor: default; }
+/* Only the one card she can actually open invites a tap; the rest stay
+   blank, which is also what the brief asked for. */
+.reason[data-state="locked"] .reason__hint { visibility: hidden; }
+.reason[data-state="next"]   { opacity: 0.72; }
+.reason[data-state="next"]:hover { opacity: 0.95; }
+
+.reason[data-state="open"] {
+  opacity: 1;
+  cursor: default;
+  border-left-color: var(--rust);
+  padding-left: 26px;
+}
+.reason[data-state="open"] .reason__text { opacity: 1; transform: none; }
+
+/* ---------- closing ---------- */
+
+.closing__signoff {
+  font-size: var(--fs-xl);
+  line-height: 1.4;
+  margin: 0 0 2.6rem;
+  text-wrap: balance;
+}
+
+.closing__rule {
+  width: 54px; height: 1px;
+  background: var(--rust);
+  border: 0;
+  margin: 0 0 2.2rem;
+}
+
+.closing__credit {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--khaki);
+  margin: 0 0 1.4rem;
+}
+
+.player { margin-top: 1.2rem; min-height: 80px; }
+.player iframe { display: block; width: 100%; border: 0; border-radius: 0; }
+
+.player__todo {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--khaki);
+  border: 1px dashed rgba(135,83,54,0.55);
+  padding: 14px 16px;
+}
+.player__todo code { color: var(--cream); }
+
+.closing__foot {
+  font-size: var(--fs-sm);
+  color: var(--khaki);
+  opacity: 0.7;
+  margin-top: 3rem;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+/* ---------- music pill ---------- */
+
+.music {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 50;
+}
+.music[hidden] { display: none; }
+
+.music__btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--cream);
+  background: rgba(10,9,8,0.82);
+  border: 1px solid rgba(135,83,54,0.6);
+  padding: 11px 15px;
+  cursor: pointer;
+  min-height: 44px;
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+}
+
+.music__icon {
+  width: 9px; height: 11px;
+  background: var(--cream);
+  /* two bars = playing (press to pause) */
+  -webkit-clip-path: polygon(0 0,3px 0,3px 11px,0 11px,6px 0,9px 0,9px 11px,6px 11px);
+          clip-path: polygon(0 0,3px 0,3px 11px,0 11px,6px 0,9px 0,9px 11px,6px 11px);
+}
+.music__btn[aria-pressed="true"] .music__icon {
+  /* triangle = paused (press to play) */
+  -webkit-clip-path: polygon(0 0, 9px 5.5px, 0 11px);
+          clip-path: polygon(0 0, 9px 5.5px, 0 11px);
+}
+
+/* ---------- focus ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--rust);
+  outline-offset: 3px;
+}
+
+/* ---------- desktop ----------
+   Stays a phone-shaped column on a dark field. Refusing to reflow into a
+   wide layout is what keeps it from reading as a landing page. */
+@media (min-width: 700px) {
+  :root { --fs-base: 18px; --section-gap: 112px; }
+  /* -10% of a 560px column = 56px a side, so it still fits a 700px viewport */
+  .page::before { inset: 0 -10%; }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .bg__blur, .bg__sharp { animation: none; transform: scale(1.06); }
+  .caret { display: none; }
+}
+
+/* ---------- dev panel (hidden unless "d" is pressed) ---------- */
+
+.dev {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  z-index: 100;
+  width: min(330px, 92vw);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(8,7,6,0.96);
+  border-left: 1px solid rgba(135,83,54,0.5);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: #d8d2c8;
+  padding: 14px 16px calc(28px + env(safe-area-inset-bottom));
+}
+.dev[hidden] { display: none; }
+.dev h2 { font-size: 12px; letter-spacing: .1em; margin: 0 0 4px; color: #eedbc2; }
+.dev__sub { color: #8d8578; margin: 0 0 16px; line-height: 1.5; }
+.dev__group { margin-bottom: 18px; }
+.dev__group > h3 {
+  font-size: 10px; letter-spacing: .16em; color: #8d8578;
+  margin: 0 0 9px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(216,210,200,0.12);
+}
+.dev__row { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; margin-bottom: 11px; }
+.dev__row label { grid-column: 1; color: #b9b2a6; }
+.dev__row output { grid-column: 2; color: #eedbc2; font-variant-numeric: tabular-nums; }
+.dev__row input, .dev__row select { grid-column: 1 / -1; width: 100%; }
+.dev__row input[type="range"] { accent-color: #875336; height: 22px; }
+.dev__row input[type="color"] { height: 30px; padding: 0; border: 1px solid #3a352e; background: #14120f; }
+.dev__row select { background: #14120f; color: #d8d2c8; border: 1px solid #3a352e; padding: 5px; }
+.dev__actions { display: grid; gap: 8px; position: sticky; bottom: 0; background: rgba(8,7,6,0.96); padding-top: 10px; }
+.dev__actions button {
+  font-family: var(--font-ui); font-size: 12px;
+  color: #eedbc2; background: #1c1712;
+  border: 1px solid #875336; padding: 10px; cursor: pointer;
+}
+.dev__actions button:hover { background: #2a2118; }
+.dev__out {
+  width: 100%; height: 130px; margin-top: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px; color: #d8d2c8; background: #14120f;
+  border: 1px solid #3a352e; padding: 8px;
+}
+.dev__out[hidden] { display: none; }

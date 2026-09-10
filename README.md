@@ -67,6 +67,54 @@ build step, which this project deliberately doesn't have.
 
 ---
 
+## Local preview with live reload
+
+```bash
+git pull
+node dev-server.js
+```
+
+No `npm install` — it has zero dependencies. It prints both URLs on startup:
+
+```
+  On this computer:   http://localhost:5173
+
+  ON YOUR PHONE (same Wi-Fi) — open this:
+
+      http://192.168.1.42:5173   (en0)
+```
+
+Type that second URL into your phone's browser. The address is your machine's,
+so it will differ from the example — read it off your own terminal.
+
+Use a different port with `PORT=8080 node dev-server.js`.
+
+**How edits behave**
+
+- **CSS edits hot-swap in place.** The page does *not* reload, so the gate stays
+  open, revealed reasons stay revealed, and your scroll position is kept. That
+  matters here — a full reload would dump you back at the entry gate every time
+  you nudged a value.
+- **HTML/JS edits reload**, then re-open the gate for you automatically so you
+  don't re-tap it each time.
+- `git pull` also triggers it, so changes pushed from elsewhere appear as soon
+  as you pull.
+
+**If your phone can't reach it**
+
+- Both devices must be on the *same* Wi-Fi. Phone on cellular, or on a "Guest"
+  network, won't work — guest networks usually block device-to-device traffic.
+- First run on macOS may show a firewall prompt; allow it.
+- On Windows, allow Node through Windows Defender Firewall on private networks.
+- To find the address manually: `ipconfig getifaddr en0` (macOS),
+  `hostname -I` (Linux), `ipconfig` (Windows, look for IPv4 Address).
+
+The watcher polls rather than using `fs.watch`. That's deliberate: editors like
+Vim and VS Code save via atomic rename, which silently breaks inode-based file
+watching, and the recursive watcher went stale in testing.
+
+---
+
 ## Deploying
 
 Drag the whole folder onto [Netlify Drop](https://app.netlify.com/drop), or

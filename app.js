@@ -2,89 +2,75 @@
    For Silvia
    No framework, no build step.
 
-   ┌──────────────────────────────────────────────────────────────────────┐
-   │  EVERYTHING YOU EDIT IS IN `CONTENT` BELOW. Don't touch index.html.  │
-   │                                                                      │
-   │  THE WORDS ARE A DRAFT. Claude wrote them without knowing either of  │
-   │  you — every observation is invented to set the register. Replace    │
-   │  them with things that actually happened.                            │
-   └──────────────────────────────────────────────────────────────────────┘
+   All the words and photos live in the CONTENT object below. Nothing else
+   needs editing. You can also change them in the browser: add ?edit to the
+   URL, or press "e".
    ========================================================================== */
 
 const CONTENT = {
 
   /* -- 1. The lock ---------------------------------------------------------
-     Six digits, DD MM YY. Note this is romance, not security: the code sits
-     in this file and anyone can read it with View Source.                  */
+     Six digits, DD MM YY. This is romance, not security: the code is in this
+     file and anyone can read it with View Source.                          */
   lock: {
     title: "Enter the special date",
     hint:  "DD MM YY",
     code:  "180999",
-    error: "Not quite. Try again."
+    error: "Not this. Try again."
   },
 
   /* -- 2. Opening --------------------------------------------------------- */
-  open: {
-    name: "Silvia",
-    line: "Open it slowly."
-  },
+  open: { name: "Silvia", line: "Open it slowly." },
 
-  /* -- 3. The letter (INVENTED — replace) --------------------------------- */
+  /* -- 3. The letter, behind the envelope --------------------------------- */
   letter: {
     hint: "Tap to open",
     salutation: "To my favourite person,",
     body: "I don't say it enough, but you are the best part of my every day. " +
-          "You apologise before you explain what's wrong. You laugh at your own " +
-          "jokes half a second early. Here's to us, and to all the memories we " +
-          "haven't made yet.",
+          "When I'm with you, my mind is quiet, my thoughts are calm, and my " +
+          "heart is full. You are excited to celebrate birthday but with your " +
+          "love, everyday I am excited to celebrate life.",
     sign: "Happy birthday, my love."
   },
 
   /* -- 4. The blooms — each flower on the vine is one of her photos --------
-     `w`/`h` are the real pixel sizes; they keep the browser from jumping
-     while the photo loads. CAPTIONS ARE INVENTED. Replace them.           */
+     `w`/`h` are the real pixel sizes; they stop the page jumping as each
+     photo loads.                                                           */
   blooms: [
-    { src: "photos/01.jpg", w: 958,  h: 1280,
-      caption: "The sea behind you, and you not looking at me once." },
     { src: "photos/02.jpg", w: 960,  h: 1280,
-      caption: "You struck this pose unprompted, then looked straight at the floor." },
+      caption: "May the world always surprise you with something good." },
     { src: "photos/03.jpg", w: 960,  h: 1280,
-      caption: "You walked the same stones twice so I could get it right." },
+      caption: "Wish that life is always kind to you." },
     { src: "photos/04.jpg", w: 1280, h: 960,
-      caption: "Late, and you'd stopped performing by then." },
+      caption: "Hoping you'd find a reason to smile without trying." },
     { src: "photos/05.jpg", w: 960,  h: 1280,
-      caption: "The light going, and you turned before I asked." }
+      caption: "Finger crossed for you to find comfort in ordinary days." }
   ],
 
-  /* -- 5. Reasons (INVENTED — replace) ------------------------------------ */
+  /* -- 5. Reasons --------------------------------------------------------- */
   reasons: {
-    title: "Some of the reasons",
+    title: "Some of the reasons you are special:",
     items: [
-      "You are kind in the way that costs something.",
-      "You ask the second question.",
-      "You have never made me smaller so that you could feel bigger.",
-      "You are honest about the unflattering things.",
-      "You do the thing that frightens you, and don't mention that it did."
+      "You have a cheap taste in food. Get better.",
+      "You pretend you don't want me, it's cute.",
+      "You are the only VIP member in 2 Luckin Coffee Whatsapp Channel.",
+      "You sometimes go crazy. Very.",
+      "You look for condoms first thing in every Watsons."
     ]
   },
 
   /* -- 6. Closing --------------------------------------------------------- */
   close: {
-    question: "Will you be mine for another year?",
-    credit:   "keshi — “Soft Spot”",
-    foot:     "Made by hand, for you."
+    question: "Surprise! I am your biggest gift this year!",
+    credit:   "Keshi \u2014 \u201cSoft Spot\u201d",
+    foot:     "Made by Harrison, for you."
   },
 
   /* -- Music ---------------------------------------------------------------
      NO AUDIO FILE IS BUNDLED — the track is copyrighted. This is an official
-     YouTube embed, which is what makes the FULL song possible and lets it
-     repeat; a Spotify embed gives roughly 30 seconds unless the listener has
-     Premium, and cannot be looped.
-
-     The id below is keshi — "Soft Spot" (Official Music Video). YouTube was
-     unreachable from the machine that built this, so PLAY IT ONCE AND CHECK.
-     To change it: from https://www.youtube.com/watch?v=XXXXXXXXXXX take the
-     XXXXXXXXXXX part.                                                      */
+     YouTube embed, which is what makes the full song possible and lets it
+     repeat. To change it, take the XXXXXXXXXXX from
+     https://www.youtube.com/watch?v=XXXXXXXXXXX                            */
   music: {
     youTubeId: "4Lmcadu8ghM",
     label: "Music",

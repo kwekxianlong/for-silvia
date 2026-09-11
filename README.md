@@ -59,6 +59,26 @@ code sits in `app.js` and anyone can read it with View Source.
 
 ---
 
+## Editing the words and photos yourself
+
+Add **`?edit`** to the URL, or press **`e`** on a keyboard:
+
+    https://kwekxianlong.github.io/for-silvia/?edit
+
+That opens an editor over the page with every piece of text in it, plus the
+photos. You can retype anything, drag the photo rows to reorder them (or use
+the arrows, which work on a phone), swap a photo, or remove one. The page
+updates behind the editor as you type.
+
+**Your edits are kept in that browser only.** They survive a reload on your
+own device, but they are not in the site and nobody else sees them. When
+you're happy, press **Copy text** and paste the block back to me (or over the
+`CONTENT` object in `app.js`) to make it permanent.
+
+Replacing a photo from the editor is preview-only for the same reason: the
+image never leaves your browser. Send me the file and I'll put it in `/photos`
+properly.
+
 ## The tweak panel
 
 Press **`d`** anywhere on the page (or add `?dev` to the URL). `Esc` closes it.

@@ -31,6 +31,7 @@ const CONTENT = {
 
   /* -- 3. The letter (INVENTED — replace) --------------------------------- */
   letter: {
+    hint: "Tap to open",
     salutation: "To my favourite person,",
     body: "I don't say it enough, but you are the best part of my every day. " +
           "You apologise before you explain what's wrong. You laugh at your own " +
@@ -103,7 +104,40 @@ const CONTENT = {
   var reduce = window.matchMedia &&
                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var state = { typeSpeed: 44, unlocked: false, entry: "", yt: null, playing: false };
+  var state = { typeSpeed: 44, unlocked: false, entry: "", yt: null,
+                playing: false, editing: false };
+
+  /* ---- your edits ---------------------------------------------------------
+     The editor writes here. Kept in this browser only — it is not saved back
+     to the file, so use "Copy text" and paste the block into app.js (or send
+     it on) to make changes permanent.                                      */
+  var STORE = "silvia.copy.v1";
+
+  function getPath(p) {
+    return p.split(".").reduce(function (o, k) { return o && o[k]; }, CONTENT);
+  }
+  function setPath(p, v) {
+    var ks = p.split("."), last = ks.pop();
+    ks.reduce(function (o, k) { return o[k]; }, CONTENT)[last] = v;
+  }
+  function loadOverrides() {
+    var raw;
+    try { raw = localStorage.getItem(STORE); } catch (e) { return; }
+    if (!raw) return;
+    try {
+      var o = JSON.parse(raw);
+      Object.keys(o).forEach(function (p) {
+        if (getPath(p) !== undefined) setPath(p, o[p]);
+      });
+    } catch (e) {}
+  }
+  function saveOverride(p, v) {
+    var o = {};
+    try { o = JSON.parse(localStorage.getItem(STORE) || "{}"); } catch (e) {}
+    o[p] = v;
+    try { localStorage.setItem(STORE, JSON.stringify(o)); } catch (e) {}
+  }
+  loadOverrides();
 
   function cssNum(n, d) {
     var v = parseFloat(getComputedStyle(root).getPropertyValue(n));
@@ -140,7 +174,7 @@ const CONTENT = {
 
   /* ---- the typing engine -------------------------------------------------
      One ghost copy holds the final height so nothing reflows mid-type.     */
-  function typed(tag, cls, text) {
+  function typed(tag, cls, text, opts) {
     var wrap = el(tag, (cls ? cls + " " : "") + "typed");
     var ghost = el("span", "typed__ghost", text);
     ghost.setAttribute("aria-hidden", "true");
@@ -153,10 +187,10 @@ const CONTENT = {
 
     function finish() { out.textContent = text; wrap.classList.add("is-done"); }
 
-    if (reduce) { finish(); return wrap; }
+    if (reduce || state.editing) { finish(); return wrap; }
 
     var started = false;
-    onceInView(wrap, function () {
+    function run() {
       if (started) return;
       started = true;
       var t0 = null, shown = 0;
@@ -171,8 +205,13 @@ const CONTENT = {
         if (shown >= text.length) { finish(); return; }
         requestAnimationFrame(frame);
       })(performance.now());
-    });
-    // a tap finishes it early
+    }
+
+    // Blocks inside the envelope wait for it to be opened; everything else
+    // starts when it scrolls into view.
+    if (opts && opts.manual) wrap.startTyping = run;
+    else onceInView(wrap, run);
+
     wrap.addEventListener("click", finish);
     return wrap;
   }
@@ -200,23 +239,79 @@ const CONTENT = {
   /* ---- scenes ------------------------------------------------------------ */
   function buildOpen() {
     var s = $("sceneOpen");
-    var env = el("div", "open__env");
-    env.appendChild(use("envelope"));
-    s.appendChild(rise(env));
     s.appendChild(rise(typed("h1", "open__name", CONTENT.open.name)));
     s.appendChild(rise(typed("p", "open__line", CONTENT.open.line)));
   }
 
+  // Built inline rather than via <use> so the flap is a targetable element
+  // and can swing open on its own.
+  function envelopeEl() {
+    var btn = el("button", "env");
+    btn.type = "button";
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-label", "Open the letter");
+
+    var stage = el("div", "env__stage");
+    stage.innerHTML =
+      '<svg class="env__body" viewBox="0 0 200 132" aria-hidden="true">' +
+        '<rect x="2" y="2" width="196" height="128" rx="4" fill="url(#gEnv)"/>' +
+        '<path d="M2 130 76 66 2 6Z" fill="#7d0d1b"/>' +
+        '<path d="M198 130 124 66 198 6Z" fill="#7d0d1b"/>' +
+        '<path d="M2 130 100 58 198 130Z" fill="#9c1526"/>' +
+      '</svg>' +
+      '<svg class="env__flap" viewBox="0 0 200 132" aria-hidden="true">' +
+        '<path d="M2 6 100 76 198 6V2H2Z" fill="#8e1020"/>' +
+        '<path d="M2 6 100 76 198 6" fill="none" stroke="#c2405a" stroke-width="2" opacity=".45"/>' +
+      '</svg>' +
+      '<svg class="env__seal" viewBox="0 0 200 132" aria-hidden="true">' +
+        '<circle cx="100" cy="74" r="19" fill="url(#gSeal)"/>' +
+        '<circle cx="100" cy="74" r="13" fill="none" stroke="#8a6c12" stroke-width="1.2" opacity=".8"/>' +
+        '<path d="M94 74c0-4 3-6 6-6s6 2 6 6-3 7-6 9c-3-2-6-5-6-9Z" fill="#8a6c12" opacity=".75"/>' +
+      '</svg>';
+    btn.appendChild(stage);
+    btn.appendChild(el("span", "env__hint", CONTENT.letter.hint || "Tap to open"));
+    return btn;
+  }
+
   function buildLetter() {
     var s = $("sceneLetter");
+    var env = envelopeEl();
+
+    var wrap = el("div", "letter-wrap");
+    var slot = el("div");
     var paper = el("div", "paper");
     var inner = el("div", "paper__inner");
-    inner.appendChild(typed("p", "paper__salutation", CONTENT.letter.salutation));
-    inner.appendChild(typed("p", "paper__body", CONTENT.letter.body));
-    inner.appendChild(typed("p", "paper__sign", CONTENT.letter.sign));
+    var blocks = [
+      typed("p", "paper__salutation", CONTENT.letter.salutation, { manual: true }),
+      typed("p", "paper__body", CONTENT.letter.body, { manual: true }),
+      typed("p", "paper__sign", CONTENT.letter.sign, { manual: true })
+    ];
+    blocks.forEach(function (b) { inner.appendChild(b); });
     paper.appendChild(inner);
     paper.appendChild(el("span", "paper__kiss"));
-    s.appendChild(rise(paper));
+    slot.appendChild(paper);
+    wrap.appendChild(slot);
+
+    var opened = false;
+    env.addEventListener("click", function () {
+      if (opened) return;
+      opened = true;
+      env.classList.add("is-open");
+      env.setAttribute("aria-expanded", "true");
+      wrap.classList.add("is-open");
+      // let the flap swing before the words start
+      var delay = reduce || state.editing ? 0 : 620;
+      setTimeout(function () {
+        blocks.forEach(function (b, i) {
+          if (b.startTyping) setTimeout(b.startTyping, i * 90);
+        });
+      }, delay);
+    });
+
+    s.appendChild(rise(env));
+    s.appendChild(wrap);
+
+    if (state.editing) env.click();   // editing shows everything at once
   }
 
   function buildGarden() {
@@ -430,6 +525,298 @@ const CONTENT = {
   initMusic();
   initMusicButton();
   state.typeSpeed = cssNum("--type-speed", 44);
+
+  /* =========================================================================
+     TEXT + PHOTO EDITOR — press "e", or add ?edit to the URL.
+     Edits live in this browser only. "Copy text" gives you the block to make
+     them permanent.
+     ========================================================================= */
+
+  var FIELDS = [
+    { group: "The lock", items: [
+      { p: "lock.title", label: "Title" },
+      { p: "lock.hint",  label: "Hint under the title" },
+      { p: "lock.code",  label: "Unlock code (6 digits, DD MM YY)" },
+      { p: "lock.error", label: "Wrong-code message" }
+    ]},
+    { group: "Opening", items: [
+      { p: "open.name", label: "Her name" },
+      { p: "open.line", label: "Line underneath" }
+    ]},
+    { group: "The letter", items: [
+      { p: "letter.hint",       label: "Text on the envelope" },
+      { p: "letter.salutation", label: "Salutation" },
+      { p: "letter.body",       label: "Body", big: true },
+      { p: "letter.sign",       label: "Sign-off" }
+    ]},
+    { group: "Reasons", items: [
+      { p: "reasons.title",    label: "Heading" },
+      { p: "reasons.items.0",  label: "Reason 1" },
+      { p: "reasons.items.1",  label: "Reason 2" },
+      { p: "reasons.items.2",  label: "Reason 3" },
+      { p: "reasons.items.3",  label: "Reason 4" },
+      { p: "reasons.items.4",  label: "Reason 5" }
+    ]},
+    { group: "Closing", items: [
+      { p: "close.question", label: "Question" },
+      { p: "close.credit",   label: "Song credit" },
+      { p: "close.foot",     label: "Footer line" }
+    ]},
+    { group: "Music", items: [
+      { p: "music.youTubeId", label: "YouTube video id" }
+    ]}
+  ];
+
+  var editor = null;
+
+  function renderAll() {
+    ["sceneOpen", "sceneLetter", "sceneGarden", "sceneReasons", "sceneClose"]
+      .forEach(function (id) { $(id).innerHTML = ""; });
+    buildOpen(); buildLetter(); buildGarden(); buildReasons(); buildClose();
+  }
+
+  function savePhotos() {
+    saveOverride("blooms", CONTENT.blooms.map(function (b) {
+      // never persist image data: a couple of photos would blow the storage quota
+      return { src: b.src.indexOf("data:") === 0 ? "" : b.src,
+               w: b.w, h: b.h, caption: b.caption };
+    }));
+  }
+
+  function photoRows(host) {
+    host.innerHTML = "";
+    CONTENT.blooms.forEach(function (b, i) {
+      var row = el("div", "ed__photo");
+      row.draggable = true;
+      row.dataset.i = i;
+
+      var thumb = el("div", "ed__thumb");
+      var im = new Image(); im.src = b.src; im.alt = "";
+      thumb.appendChild(im);
+
+      var mid = el("div", "ed__pmid");
+      var cap = el("textarea");
+      cap.value = b.caption || "";
+      cap.setAttribute("aria-label", "Caption for photo " + (i + 1));
+      cap.addEventListener("input", function () {
+        CONTENT.blooms[i].caption = cap.value;
+        savePhotos(); schedule();
+      });
+      mid.appendChild(cap);
+
+      var tools = el("div", "ed__ptools");
+      function tool(txt, label, fn) {
+        var b2 = el("button", "ed__tool", txt);
+        b2.type = "button"; b2.setAttribute("aria-label", label);
+        b2.addEventListener("click", fn);
+        return b2;
+      }
+      // arrows as well as drag: dragging is awkward on a phone
+      tools.appendChild(tool("\u2191", "Move up", function () { move(i, -1); }));
+      tools.appendChild(tool("\u2193", "Move down", function () { move(i, 1); }));
+
+      var pick = el("input"); pick.type = "file"; pick.accept = "image/*";
+      pick.style.display = "none";
+      pick.addEventListener("change", function () {
+        var f = pick.files && pick.files[0];
+        if (!f) return;
+        var fr = new FileReader();
+        fr.onload = function () {
+          var probe = new Image();
+          probe.onload = function () {
+            CONTENT.blooms[i].src = fr.result;
+            CONTENT.blooms[i].w = probe.naturalWidth;
+            CONTENT.blooms[i].h = probe.naturalHeight;
+            renderAll(); photoRows(host);
+            note("Showing your file. It lives only in this browser \u2014 send " +
+                 "me the image to put it in the site for good.");
+          };
+          probe.src = fr.result;
+        };
+        fr.readAsDataURL(f);
+      });
+      tools.appendChild(tool("\u21bb", "Replace photo", function () { pick.click(); }));
+      tools.appendChild(tool("\u2715", "Remove photo", function () {
+        if (CONTENT.blooms.length <= 1) return;
+        CONTENT.blooms.splice(i, 1);
+        savePhotos(); renderAll(); photoRows(host);
+      }));
+      tools.appendChild(pick);
+
+      row.appendChild(thumb); row.appendChild(mid); row.appendChild(tools);
+
+      row.addEventListener("dragstart", function (e) {
+        row.classList.add("is-drag");
+        e.dataTransfer.setData("text/plain", String(i));
+        e.dataTransfer.effectAllowed = "move";
+      });
+      row.addEventListener("dragend", function () { row.classList.remove("is-drag"); });
+      row.addEventListener("dragover", function (e) { e.preventDefault(); row.classList.add("is-over"); });
+      row.addEventListener("dragleave", function () { row.classList.remove("is-over"); });
+      row.addEventListener("drop", function (e) {
+        e.preventDefault(); row.classList.remove("is-over");
+        var from = parseInt(e.dataTransfer.getData("text/plain"), 10);
+        if (isNaN(from) || from === i) return;
+        var moved = CONTENT.blooms.splice(from, 1)[0];
+        CONTENT.blooms.splice(i, 0, moved);
+        savePhotos(); renderAll(); photoRows(host);
+      });
+
+      host.appendChild(row);
+    });
+
+    function move(i, d) {
+      var j = i + d;
+      if (j < 0 || j >= CONTENT.blooms.length) return;
+      var m = CONTENT.blooms.splice(i, 1)[0];
+      CONTENT.blooms.splice(j, 0, m);
+      savePhotos(); renderAll(); photoRows(host);
+    }
+  }
+
+  var reTimer = null;
+  function schedule() { clearTimeout(reTimer); reTimer = setTimeout(renderAll, 260); }
+
+  function note(msg) {
+    var n = document.querySelector(".ed__saved");
+    if (!n) return;
+    n.textContent = msg;
+    clearTimeout(note._t);
+    note._t = setTimeout(function () { n.textContent = ""; }, 4200);
+  }
+
+  function buildEditor() {
+    var w = el("aside", "ed"); w.id = "editor"; w.hidden = true;
+    w.setAttribute("aria-label", "Edit the words and photos");
+
+    var bar = el("div", "ed__bar");
+    bar.appendChild(el("h2", null, "EDIT"));
+    var close = el("button", "ed__close", "Done"); close.type = "button";
+    close.addEventListener("click", function () { toggleEditor(); });
+    bar.appendChild(close);
+
+    var body = el("div", "ed__body");
+    body.appendChild(el("p", "ed__note",
+      "Type and the page updates behind this. Changes are kept in this browser " +
+      "only \u2014 press Copy text when you're happy and paste it back to me, or " +
+      "into app.js, to make them permanent."));
+
+    var pg = el("div", "ed__group");
+    pg.appendChild(el("h3", null, "PHOTOS \u2014 DRAG, OR USE THE ARROWS"));
+    var phost = el("div", "ed__photos");
+    pg.appendChild(phost);
+    body.appendChild(pg);
+
+    FIELDS.forEach(function (g) {
+      var gr = el("div", "ed__group");
+      gr.appendChild(el("h3", null, g.group.toUpperCase()));
+      g.items.forEach(function (it) {
+        var f = el("div", "ed__field");
+        var id = "ed_" + it.p.replace(/\./g, "_");
+        var lab = el("label", null, it.label); lab.htmlFor = id; f.appendChild(lab);
+        var inp = el(it.big ? "textarea" : "input");
+        inp.id = id;
+        inp.value = getPath(it.p) == null ? "" : String(getPath(it.p));
+        inp.addEventListener("input", function () {
+          setPath(it.p, inp.value);
+          saveOverride(it.p, inp.value);
+          if (it.p === "lock.code") return;        // lock is already behind us
+          schedule();
+        });
+        f.appendChild(inp);
+        gr.appendChild(f);
+      });
+      body.appendChild(gr);
+    });
+
+    var out = el("textarea", "ed__out"); out.readOnly = true; out.hidden = true;
+    body.appendChild(out);
+    body.appendChild(el("p", "ed__saved"));
+
+    var acts = el("div", "ed__acts");
+    var copy = el("button", null, "Copy text"); copy.type = "button";
+    copy.addEventListener("click", function () {
+      var text = serialise();
+      out.hidden = false; out.value = text; out.focus(); out.select();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          note("Copied. Paste it back to me and I'll put it in the site.");
+        }, function () { note("Select the box below and copy it."); });
+      } else { note("Select the box below and copy it."); }
+    });
+    var reset = el("button", "ghost", "Reset"); reset.type = "button";
+    reset.addEventListener("click", function () {
+      try { localStorage.removeItem(STORE); } catch (e) {}
+      location.reload();
+    });
+    acts.appendChild(copy); acts.appendChild(reset);
+
+    w.appendChild(bar); w.appendChild(body); w.appendChild(acts);
+    document.body.appendChild(w);
+    photoRows(phost);
+    return w;
+  }
+
+  function serialise() {
+    function s(v) { return JSON.stringify(String(v)); }
+    var L = [];
+    L.push("// Paste over the CONTENT object in app.js");
+    L.push("lock: {");
+    L.push("  title: " + s(CONTENT.lock.title) + ",");
+    L.push("  hint:  " + s(CONTENT.lock.hint) + ",");
+    L.push("  code:  " + s(CONTENT.lock.code) + ",");
+    L.push("  error: " + s(CONTENT.lock.error));
+    L.push("},");
+    L.push("open: { name: " + s(CONTENT.open.name) + ", line: " + s(CONTENT.open.line) + " },");
+    L.push("letter: {");
+    L.push("  hint: " + s(CONTENT.letter.hint || "") + ",");
+    L.push("  salutation: " + s(CONTENT.letter.salutation) + ",");
+    L.push("  body: " + s(CONTENT.letter.body) + ",");
+    L.push("  sign: " + s(CONTENT.letter.sign));
+    L.push("},");
+    L.push("blooms: [");
+    CONTENT.blooms.forEach(function (b) {
+      var src = b.src.indexOf("data:") === 0 ? "photos/REPLACE-ME.jpg" : b.src;
+      L.push("  { src: " + s(src) + ", w: " + b.w + ", h: " + b.h +
+             ", caption: " + s(b.caption || "") + " },");
+    });
+    L.push("],");
+    L.push("reasons: {");
+    L.push("  title: " + s(CONTENT.reasons.title) + ",");
+    L.push("  items: [");
+    CONTENT.reasons.items.forEach(function (t) { L.push("    " + s(t) + ","); });
+    L.push("  ]");
+    L.push("},");
+    L.push("close: {");
+    L.push("  question: " + s(CONTENT.close.question) + ",");
+    L.push("  credit: " + s(CONTENT.close.credit) + ",");
+    L.push("  foot: " + s(CONTENT.close.foot));
+    L.push("},");
+    L.push("music: { youTubeId: " + s(CONTENT.music.youTubeId) + " }");
+    return L.join("\n");
+  }
+
+  function toggleEditor() {
+    if (!editor) editor = buildEditor();
+    var opening = editor.hidden;
+    editor.hidden = !opening;
+    state.editing = opening;
+    document.body.classList.toggle("is-editing", opening);
+    if (opening) {
+      // get past the lock so the page behind is actually visible
+      if (!state.unlocked) { state.entry = String(CONTENT.lock.code); unlock(); }
+      renderAll();
+    } else { renderAll(); }
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" ||
+              t.tagName === "SELECT" || t.isContentEditable)) return;
+    if (e.key === "e" || e.key === "E") { e.preventDefault(); toggleEditor(); }
+  });
+  if (/[?&]edit\b/.test(location.search)) setTimeout(toggleEditor, 60);
 
   /* =========================================================================
      DEV PANEL — press "d" (or add ?dev). Esc closes.

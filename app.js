@@ -1,214 +1,166 @@
 /* ============================================================================
-   For Silvia — single-page birthday site
-   No framework, no build step, no external JS libraries.
+   For Silvia
+   No framework, no build step.
 
    ┌──────────────────────────────────────────────────────────────────────┐
-   │  EVERYTHING YOU NEED TO EDIT IS IN THE `CONTENT` OBJECT BELOW.        │
-   │  You should not have to touch index.html at all.                     │
+   │  EVERYTHING YOU EDIT IS IN `CONTENT` BELOW. Don't touch index.html.  │
    │                                                                      │
-   │  THE WORDS BELOW ARE A DRAFT, NOT FACTS. Claude wrote them without   │
-   │  knowing either of you. The observations are invented to show the    │
-   │  register — swap each one for something that actually happened.      │
+   │  THE WORDS ARE A DRAFT. Claude wrote them without knowing either of  │
+   │  you — every observation is invented to set the register. Replace    │
+   │  them with things that actually happened.                            │
    └──────────────────────────────────────────────────────────────────────┘
    ========================================================================== */
 
 const CONTENT = {
 
-  /* -- 1. Entry gate ------------------------------------------------------ */
-  gate: {
-    line:   "Silvia — headphones in, if you have them. There's a song attached to this.",
-    button: "Open",
-    note:   "It starts with sound"
+  /* -- 1. The lock ---------------------------------------------------------
+     Six digits, DD MM YY. Note this is romance, not security: the code sits
+     in this file and anyone can read it with View Source.                  */
+  lock: {
+    title: "Enter the special date",
+    hint:  "DD MM YY",
+    code:  "180999",
+    error: "Not quite. Try again."
   },
 
-  /* -- 2. Hero ------------------------------------------------------------ */
-  hero: {
+  /* -- 2. Opening --------------------------------------------------------- */
+  open: {
     name: "Silvia",
-    line: "I rewrote this more times than I'd like to admit. This is the version that's true."
+    line: "Open it slowly."
   },
 
-  /* -- 3. The typed letter ------------------------------------------------
-     INVENTED — replace both observations with real ones. The shape is the
-     point: notice something small and specific rather than saying something
-     large and general. Keep it short; it types one character at a time.   */
-  letter:
-    "I'm not good at this part, so here's what I've noticed instead. " +
-    "You apologise before you explain what's wrong. You laugh at your own " +
-    "jokes half a second early. You have never once made me feel like an " +
-    "inconvenience.",
+  /* -- 3. The letter (INVENTED — replace) --------------------------------- */
+  letter: {
+    salutation: "To my favourite person,",
+    body: "I don't say it enough, but you are the best part of my every day. " +
+          "You apologise before you explain what's wrong. You laugh at your own " +
+          "jokes half a second early. Here's to us, and to all the memories we " +
+          "haven't made yet.",
+    sign: "Happy birthday, my love."
+  },
 
-  /* -- 4. Photos ----------------------------------------------------------
-       • photos[0] is the HERO portrait (top of the page).
-       • photos[1..] fill the gallery, each with its caption.
-       • All of them cycle through the background during the reasons.
-     `w` and `h` are the real pixel dimensions. They set each frame's shape,
-     so a landscape photo stays landscape instead of being cropped to fit a
-     portrait box — keep them accurate when you swap a photo in.
-     CAPTIONS ARE INVENTED. Replace them with what actually happened.      */
-  photos: [
+  /* -- 4. The blooms — each flower on the vine is one of her photos --------
+     `w`/`h` are the real pixel sizes; they keep the browser from jumping
+     while the photo loads. CAPTIONS ARE INVENTED. Replace them.           */
+  blooms: [
     { src: "photos/01.jpg", w: 958,  h: 1280,
-      caption: "" },
+      caption: "The sea behind you, and you not looking at me once." },
     { src: "photos/02.jpg", w: 960,  h: 1280,
-      caption: "You struck this pose unprompted, then immediately looked at the floor. Both halves are you." },
+      caption: "You struck this pose unprompted, then looked straight at the floor." },
     { src: "photos/03.jpg", w: 960,  h: 1280,
-      caption: "You walked the same stones twice so I could get it right, and said it was because you liked the garden." },
+      caption: "You walked the same stones twice so I could get it right." },
     { src: "photos/04.jpg", w: 1280, h: 960,
-      caption: "Late, and you'd stopped performing by then. That's the version of you I like most." },
+      caption: "Late, and you'd stopped performing by then." },
     { src: "photos/05.jpg", w: 960,  h: 1280,
-      caption: "The light going, somewhere high up. You turned around before I asked you to." }
+      caption: "The light going, and you turned before I asked." }
   ],
 
-  /* -- 5. Reasons ---------------------------------------------------------
-     INVENTED. These are written to be precise rather than sweet — each one
-     names a behaviour you could point at, not a feeling. Keep that shape
-     and put your own in.                                                  */
+  /* -- 5. Reasons (INVENTED — replace) ------------------------------------ */
   reasons: {
-    intro: "Five of them. One at a time — they aren't meant to be skimmed.",
-    hint:  "tap to open",
+    title: "Some of the reasons",
     items: [
-      "You're kind in the way that costs something. The kind that rearranges your own day.",
-      "You ask the second question. Most people stop at the first and wait for their turn to talk.",
-      "You have never made me smaller so that you could feel bigger. I didn't know how rare that was until I had it.",
-      "You're honest about the unflattering things, which is the reason I believe you about the rest.",
-      "You do the thing that frightens you, and then don't mention that it frightened you."
+      "You are kind in the way that costs something.",
+      "You ask the second question.",
+      "You have never made me smaller so that you could feel bigger.",
+      "You are honest about the unflattering things.",
+      "You do the thing that frightens you, and don't mention that it did."
     ]
   },
 
   /* -- 6. Closing --------------------------------------------------------- */
-  closing: {
-    signoff: "Happy birthday, Silvia. Whatever this year asks of you, I'm on your side of it.",
-    credit:  "keshi — “Soft Spot”",
-    foot:    "Built over a few late nights, which was the easiest part of this."
+  close: {
+    question: "Will you be mine for another year?",
+    credit:   "keshi — “Soft Spot”",
+    foot:     "Made by hand, for you."
   },
 
-  /* -- Music --------------------------------------------------------------
-     NO AUDIO FILE IS BUNDLED WITH THIS SITE, by design — the track is
-     copyrighted. Playback is an official Spotify embed.
+  /* -- Music ---------------------------------------------------------------
+     NO AUDIO FILE IS BUNDLED — the track is copyrighted. This is an official
+     YouTube embed, which is what makes the FULL song possible and lets it
+     repeat; a Spotify embed gives roughly 30 seconds unless the listener has
+     Premium, and cannot be looped.
 
-     ⚠ THE ID BELOW IS UNVERIFIED. It came from a web search; Spotify itself
-     was unreachable from the machine that wrote this, and "Soft Spot" has
-     several releases (single, album, acoustic, live) with different ids.
-     PRESS PLAY ONCE AND CHECK IT IS THE RIGHT RECORDING before you send
-     this to her.
-
-     To replace it: Spotify → Share → Copy Song Link, then take the id
-     between /track/ and the "?".                                         */
+     The id below is keshi — "Soft Spot" (Official Music Video). YouTube was
+     unreachable from the machine that built this, so PLAY IT ONCE AND CHECK.
+     To change it: from https://www.youtube.com/watch?v=XXXXXXXXXXX take the
+     XXXXXXXXXXX part.                                                      */
   music: {
-    spotifyTrackId: "2aL4lMGhWdPpyPL6COPou7",
-    label:  "Music",
-    nudge:  "Tap play below to start the song"
+    youTubeId: "4Lmcadu8ghM",
+    label: "Music",
+    nudge: "Tap to start the song"
   }
 };
 
 /* ==========================================================================
-   Below this line is machinery. You shouldn't need to edit it.
+   Machinery below.
    ========================================================================== */
 
 (function () {
   "use strict";
 
-  var TRACK_PLACEHOLDER = "PASTE_SPOTIFY_TRACK_ID_HERE";
-  var root  = document.documentElement;
-  var $     = function (id) { return document.getElementById(id); };
-  var reduceMotion = window.matchMedia &&
-                     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var root = document.documentElement;
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia &&
+               window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var state = {
-    typeSpeed: 42,
-    revealed:  0,
-    visible:   "B",     // which portrait layer is currently shown
-    portraitIndex: -1,
-    spotify:   null,
-    gateOpen:  false,
-    playing:   false,
-    sawPlayback: false
-  };
+  var state = { typeSpeed: 44, unlocked: false, entry: "", yt: null, playing: false };
 
-  function cssNum(name, fallback) {
-    var v = parseFloat(getComputedStyle(root).getPropertyValue(name));
-    return isNaN(v) ? fallback : v;
+  function cssNum(n, d) {
+    var v = parseFloat(getComputedStyle(root).getPropertyValue(n));
+    return isNaN(v) ? d : v;
   }
-
   function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
     if (text != null) n.textContent = text;
     return n;
   }
-
-  /* ---------------------------------------------------------------- hero -- */
-
-  function buildHero() {
-    var host = $("hero");
-    var p = CONTENT.photos[0];
-    if (p) {
-      var fig = el("figure", "hero__shot");
-      var frame = el("div", "shot__frame");
-      frame.style.aspectRatio = p.w + " / " + p.h;
-      var img = new Image();
-      img.src = p.src;
-      img.width = p.w; img.height = p.h;     // reserves space, prevents jump
-      img.alt = CONTENT.hero.name;
-      img.decoding = "async";
-      img.loading = "eager";
-      img.setAttribute("fetchpriority", "high");
-      markWhenLoaded(img);
-      frame.appendChild(img);
-      fig.appendChild(frame);
-      host.appendChild(fig);
-    }
-    var h1 = el("h1", "hero__name", CONTENT.hero.name);
-    var ln = el("p",  "hero__line", CONTENT.hero.line);
-    host.appendChild(h1);
-    host.appendChild(ln);
+  function use(symbol) {
+    var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    var u = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    u.setAttribute("href", "#" + symbol);
+    s.appendChild(u);
+    s.setAttribute("aria-hidden", "true");
+    return s;
+  }
+  function onceInView(node, fn, margin) {
+    if (!("IntersectionObserver" in window)) { fn(); return; }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); fn(); } });
+    }, { rootMargin: margin || "0px 0px -12% 0px", threshold: 0.01 });
+    io.observe(node);
   }
 
-  function markWhenLoaded(img) {
-    if (img.complete && img.naturalWidth) { img.classList.add("is-in"); return; }
-    img.addEventListener("load",  function () { img.classList.add("is-in"); });
-    img.addEventListener("error", function () { img.classList.add("is-in"); });
+  /* ---- reveal-on-scroll ------------------------------------------------- */
+  function rise(node) {
+    node.classList.add("rise");
+    onceInView(node, function () { node.classList.add("is-in"); });
+    return node;
   }
 
-  /* -------------------------------------------------------------- letter -- */
-
-  function buildLetter() {
-    var host = $("letterSec");
-    var text = CONTENT.letter;
-
-    var p = el("p", "letter");
-    var ghost = el("span", "letter__ghost", text);   // reserves full height
+  /* ---- the typing engine -------------------------------------------------
+     One ghost copy holds the final height so nothing reflows mid-type.     */
+  function typed(tag, cls, text) {
+    var wrap = el(tag, (cls ? cls + " " : "") + "typed");
+    var ghost = el("span", "typed__ghost", text);
     ghost.setAttribute("aria-hidden", "true");
-    var out = el("span", "letter__out");
+    var out = el("span", "typed__out");
     var caret = el("span", "caret");
     caret.setAttribute("aria-hidden", "true");
     out.appendChild(caret);
-    p.appendChild(ghost);
-    p.appendChild(out);
+    wrap.appendChild(ghost);
+    wrap.appendChild(out);
 
-    var skip = el("button", "letter-skip", "Show it all");
-    skip.type = "button";
+    function finish() { out.textContent = text; wrap.classList.add("is-done"); }
 
-    host.appendChild(p);
-    host.appendChild(skip);
+    if (reduce) { finish(); return wrap; }
 
-    function finish() {
-      out.textContent = text;
-      p.classList.add("is-done");
-      skip.hidden = true;
-      cancelled = true;
-    }
-
-    if (reduceMotion) { finish(); return; }
-
-    var cancelled = false;
     var started = false;
-
-    function run() {
+    onceInView(wrap, function () {
       if (started) return;
       started = true;
       var t0 = null, shown = 0;
-      function frame(ts) {
-        if (cancelled) return;
+      (function frame(ts) {
         if (t0 === null) t0 = ts;
         var want = Math.floor((ts - t0) / Math.max(1, state.typeSpeed));
         if (want !== shown) {
@@ -218,543 +170,397 @@ const CONTENT = {
         }
         if (shown >= text.length) { finish(); return; }
         requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    }
-
-    p.addEventListener("click", finish);
-    skip.addEventListener("click", finish);
-
-    onceInView(host, run, "0px 0px -18% 0px");
+      })(performance.now());
+    });
+    // a tap finishes it early
+    wrap.addEventListener("click", finish);
+    return wrap;
   }
 
-  /* ------------------------------------------------------------- gallery -- */
+  /* ---- the decorative vine ---------------------------------------------- */
+  function buildVine() {
+    var v = $("vine");
+    v.appendChild(el("div", "vine__stem"));
+    var h = Math.max(document.body.scrollHeight, window.innerHeight * 3);
+    var step = 210, i = 0;
+    for (var y = 120; y < h; y += step, i++) {
+      var bit = el("div", "vine__bit");
+      var isRose = i % 3 === 0;
+      var size = isRose ? 54 : 40;
+      bit.style.top = y + "px";
+      bit.style.height = size + "px";
+      bit.style.width = size + "px";
+      bit.style.left = (i % 2 ? 44 : 8) + "px";
+      bit.style.transform = "rotate(" + (i % 2 ? 22 : -26) + "deg)";
+      bit.appendChild(use(isRose ? "rose" : "leaf"));
+      v.appendChild(bit);
+    }
+  }
 
-  function buildGallery() {
-    var host = $("gallery");
-    CONTENT.photos.slice(1).forEach(function (p) {
-      var fig = el("figure", "shot");
-      var frame = el("div", "shot__frame");
-      frame.style.aspectRatio = p.w + " / " + p.h;
+  /* ---- scenes ------------------------------------------------------------ */
+  function buildOpen() {
+    var s = $("sceneOpen");
+    var env = el("div", "open__env");
+    env.appendChild(use("envelope"));
+    s.appendChild(rise(env));
+    s.appendChild(rise(typed("h1", "open__name", CONTENT.open.name)));
+    s.appendChild(rise(typed("p", "open__line", CONTENT.open.line)));
+  }
+
+  function buildLetter() {
+    var s = $("sceneLetter");
+    var paper = el("div", "paper");
+    var inner = el("div", "paper__inner");
+    inner.appendChild(typed("p", "paper__salutation", CONTENT.letter.salutation));
+    inner.appendChild(typed("p", "paper__body", CONTENT.letter.body));
+    inner.appendChild(typed("p", "paper__sign", CONTENT.letter.sign));
+    paper.appendChild(inner);
+    paper.appendChild(el("span", "paper__kiss"));
+    s.appendChild(rise(paper));
+  }
+
+  function buildGarden() {
+    var s = $("sceneGarden");
+    var g = el("div", "garden");
+    g.appendChild(el("div", "garden__stem"));
+    CONTENT.blooms.forEach(function (b) {
+      var wrap = el("div", "bloom");
+      var frame = el("div", "bloom__frame");
       var img = new Image();
-      img.src = p.src;
-      img.width = p.w; img.height = p.h;
-      img.alt = p.caption || "";
+      img.src = b.src;
+      img.width = b.w; img.height = b.h;
+      img.alt = b.caption || "";
       img.loading = "lazy";
       img.decoding = "async";
-      markWhenLoaded(img);
+      if (img.complete && img.naturalWidth) img.classList.add("is-in");
+      else {
+        img.addEventListener("load", function () { img.classList.add("is-in"); });
+        img.addEventListener("error", function () { img.classList.add("is-in"); });
+      }
       frame.appendChild(img);
-      fig.appendChild(frame);
-      if (p.caption) fig.appendChild(el("figcaption", null, p.caption));
-      host.appendChild(fig);
-    });
-  }
 
-  /* ------------------------------------------------------------- reasons -- */
+      // The photograph is the flower. Leaves flank it; no rose beside it,
+      // which read as ears and confused the idea.
+      ["a", "b"].forEach(function (k) {
+        var l = el("span", "bloom__leaf bloom__leaf--" + k);
+        l.appendChild(use("leaf"));
+        wrap.appendChild(l);
+      });
+
+      wrap.appendChild(frame);
+      if (b.caption) wrap.appendChild(typed("p", "bloom__caption", b.caption));
+      g.appendChild(rise(wrap));
+    });
+    s.appendChild(g);
+  }
 
   function buildReasons() {
-    var host  = $("reasons");
-    var items = CONTENT.reasons.items || [];
-
-    if (CONTENT.reasons.intro) {
-      host.appendChild(el("p", "reasons__intro", CONTENT.reasons.intro));
-    }
-
-    var buttons = [];
-
-    items.forEach(function (txt, i) {
-      // A real <button>: focusable and Enter/Space-activatable natively,
-      // which is more reliable than div + role + keydown handlers.
-      var b = el("button", "reason");
-      b.type = "button";
-      b.setAttribute("aria-expanded", "false");
-      var hint = el("span", "reason__hint", CONTENT.reasons.hint || "tap to open");
-      var body = el("span", "reason__text", txt);
-      body.hidden = true;
-      b.appendChild(hint);
-      b.appendChild(body);
-
-      b.addEventListener("click", function () {
-        if (b.dataset.state !== "next") return;   // strictly one at a time
-        hint.remove();
-        body.hidden = false;
-        b.dataset.state = "open";
-        b.setAttribute("aria-expanded", "true");
-        b.disabled = true;                        // nothing left to activate
-        state.revealed += 1;
-        advance(buttons);
-        progress(state.revealed, items.length);
-      });
-
-      buttons.push(b);
-      host.appendChild(b);
+    var s = $("sceneReasons");
+    s.appendChild(rise(typed("h2", "reasons__title", CONTENT.reasons.title)));
+    var box = el("div", "reasons");
+    CONTENT.reasons.items.forEach(function (t) {
+      box.appendChild(rise(typed("p", "reason", t)));
     });
-
-    advance(buttons);
-    watchForSharpAsset(host);
+    s.appendChild(box);
   }
 
-  function advance(buttons) {
-    var found = false;
-    buttons.forEach(function (b) {
-      if (b.dataset.state === "open") return;
-      if (!found) { b.dataset.state = "next"; b.disabled = false; found = true; }
-      else        { b.dataset.state = "locked"; b.disabled = true; }
-    });
+  function buildClose() {
+    var s = $("sceneClose");
+    s.appendChild(rise(typed("h2", "close__q", CONTENT.close.question)));
+    var bow = el("div", "close__bow");
+    bow.appendChild(use("bow"));
+    s.appendChild(rise(bow));
+    s.appendChild(rise(el("p", "close__credit", CONTENT.close.credit)));
+    s.appendChild(rise(el("p", "close__foot", CONTENT.close.foot)));
   }
 
-  /* ------------------------------------------- background progression ----- */
+  /* ---- the lock ---------------------------------------------------------- */
+  var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+    '<path d="M12 21s-8-5.2-8-10.4A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 3.6C20 15.8 12 21 12 21Z"' +
+    ' fill="#c2142a"/></svg>';
 
-  function progress(done, total) {
-    var t = total ? done / total : 0;
+  function buildLock() {
+    $("lockTitle").textContent = CONTENT.lock.title;
+    $("lockHint").textContent = CONTENT.lock.hint;
 
-    // The painting lifts out of darkness and comes into focus as she reads.
-    var start = cssNum("--veil", 0.86);
-    var end   = cssNum("--veil-end", 0.30);
-    $("bgVeil").style.opacity  = (start + (end - start) * t).toFixed(3);
-    $("bgSharp").style.opacity = t.toFixed(3);
-
-    // Column scrim strengthens as the veil lifts, so the text stays readable
-    // while the bouquet brightens around it.
-    var s0 = cssNum("--scrim-start", 0.30);
-    var s1 = cssNum("--scrim-end", 0.70);
-    root.style.setProperty("--scrim", (s0 + (s1 - s0) * t).toFixed(3));
-
-    if (done > 0) showPortrait(done);
-  }
-
-  function showPortrait(index) {
-    var photos = CONTENT.photos;
-    if (!photos.length) return;
-    var op = String(cssNum("--portrait-opacity", 0.42));
-
-    // Same portrait, just an opacity tweak from the dev panel: don't swap
-    // layers, or the slider flickers between the two.
-    if (index === state.portraitIndex) {
-      ($("bgPort" + state.visible)).style.opacity = op;
-      return;
-    }
-    var nextSlot = state.visible === "A" ? "B" : "A";
-    var incoming = $("bgPort" + nextSlot);
-    var outgoing = $("bgPort" + state.visible);
-    incoming.src = photos[index % photos.length].src;
-    incoming.style.opacity = op;
-    outgoing.style.opacity = "0";
-    state.visible = nextSlot;
-    state.portraitIndex = index;
-  }
-
-  // The 1080px painting is ~600 KB and is only really *seen* once the veil
-  // lifts, so it isn't fetched until she approaches the reasons.
-  function watchForSharpAsset(node) {
-    onceInView(node, function () { $("bgSharp").classList.add("is-loaded"); },
-               "0px 0px 40% 0px");
-  }
-
-  function onceInView(node, fn, rootMargin) {
-    if (!("IntersectionObserver" in window)) { fn(); return; }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { io.disconnect(); fn(); }
-      });
-    }, { rootMargin: rootMargin || "0px", threshold: 0.01 });
-    io.observe(node);
-  }
-
-  /* ------------------------------------------------------------- closing -- */
-
-  function buildClosing() {
-    var host = $("closing");
-    host.appendChild(el("p", "closing__signoff", CONTENT.closing.signoff));
-    host.appendChild(el("hr", "closing__rule"));
-    host.appendChild(el("p", "closing__credit", CONTENT.closing.credit));
-
-    var player = el("div", "player");
-    player.id = "player";
-    host.appendChild(player);
-
-    if (CONTENT.closing.foot) {
-      host.appendChild(el("p", "closing__foot", CONTENT.closing.foot));
-    }
-  }
-
-  /* --------------------------------------------------------------- music -- */
-
-  function initMusic() {
-    var id = CONTENT.music.spotifyTrackId;
-    var player = $("player");
-
-    if (!id || id === TRACK_PLACEHOLDER) {
-      var todo = el("div", "player__todo");
-      todo.innerHTML =
-        "<strong>No track set yet.</strong><br>" +
-        "Open <code>app.js</code> and put the Spotify track id in " +
-        "<code>CONTENT.music.spotifyTrackId</code>. " +
-        "Spotify → Share → Copy Song Link, then take the id " +
-        "between <code>/track/</code> and <code>?</code>.";
-      player.appendChild(todo);
-      return;
-    }
-
-    // Mount point the Spotify IFrame API replaces with its own iframe.
-    var mount = el("div");
-    mount.id = "spotifyMount";
-    player.appendChild(mount);
-
-    var settled = false;
-
-    window.onSpotifyIframeApiReady = function (API) {
-      try {
-        API.createController(mount, {
-          uri: "spotify:track:" + id,
-          width: "100%",
-          height: 152
-        }, function (controller) {
-          settled = true;
-          state.spotify = controller;
-          revealMusic();
-
-          controller.addListener("playback_update", function (e) {
-            if (!e || !e.data) return;
-            state.sawPlayback = !e.data.isPaused;
-            setPlayingUI(!e.data.isPaused);
-          });
-        });
-      } catch (err) {
-        fallbackEmbed(player, mount, id);
+    var slots = $("lockSlots");
+    for (var i = 0; i < 6; i++) {
+      slots.appendChild(el("span", "slot"));
+      if (i === 1 || i === 3) {
+        var sep = el("span", "slot");
+        sep.style.borderBottom = "none";
+        sep.style.width = "8px";
+        sep.appendChild(el("span", "sep", "/"));
+        slots.appendChild(sep);
       }
-    };
+    }
 
-    var s = document.createElement("script");
-    s.src = "https://open.spotify.com/embed/iframe-api/v1";
-    s.async = true;
-    s.onerror = function () { fallbackEmbed(player, mount, id); };
-    document.head.appendChild(s);
+    var pad = $("lockPad");
+    ["1","2","3","4","5","6","7","8","9","","0","⌫"].forEach(function (k) {
+      if (k === "") { pad.appendChild(el("span", "key key--ghost")); return; }
+      var b = el("button", "key" + (k === "⌫" ? " key--back" : ""), k);
+      b.type = "button";
+      b.setAttribute("aria-label", k === "⌫" ? "Delete" : k);
+      b.addEventListener("click", function () {
+        if (k === "⌫") press(null); else press(k);
+      });
+      pad.appendChild(b);
+    });
 
-    // If the API never initialises (blocked, offline, changed), degrade to a
-    // plain embed rather than leaving an empty box.
+    document.addEventListener("keydown", function (e) {
+      if (state.unlocked) return;
+      if (/^[0-9]$/.test(e.key)) press(e.key);
+      else if (e.key === "Backspace") { e.preventDefault(); press(null); }
+    });
+
+    paint();
+  }
+
+  function realSlots() {
+    return Array.prototype.filter.call(
+      $("lockSlots").children, function (n) { return !n.querySelector(".sep"); });
+  }
+
+  function paint() {
+    realSlots().forEach(function (s, i) {
+      var on = i < state.entry.length;
+      s.classList.toggle("is-filled", on);
+      s.innerHTML = on ? HEART : "";
+    });
+  }
+
+  function press(digit) {
+    $("lockError").classList.remove("is-on");
+    if (digit === null) state.entry = state.entry.slice(0, -1);
+    else if (state.entry.length < 6) state.entry += digit;
+    paint();
+    if (state.entry.length === 6) setTimeout(check, 220);
+  }
+
+  function check() {
+    if (state.entry === String(CONTENT.lock.code)) { unlock(); return; }
+    var card = document.querySelector(".lock__card");
+    card.classList.add("is-wrong");
+    $("lockError").textContent = CONTENT.lock.error;
+    $("lockError").classList.add("is-on");
     setTimeout(function () {
-      if (!settled) fallbackEmbed(player, mount, id);
-    }, 4000);
+      card.classList.remove("is-wrong");
+      state.entry = "";
+      paint();
+    }, 560);
   }
 
-  function fallbackEmbed(player, mount, id) {
-    if (document.getElementById("spotifyFallback")) return;
-    if (mount && mount.parentNode) mount.parentNode.removeChild(mount);
-    var f = document.createElement("iframe");
-    f.id = "spotifyFallback";
-    f.src = "https://open.spotify.com/embed/track/" + id + "?utm_source=generator&theme=0";
-    f.width = "100%";
-    f.height = "152";
-    f.loading = "lazy";
-    f.title = "Spotify player";
-    f.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
-    player.appendChild(f);
-    // No controller available, so the pill scrolls to the player instead.
-    revealMusic();
-    $("musicLabel").textContent = "Player";
+  function unlock() {
+    state.unlocked = true;
+    $("lock").classList.add("is-open");
+    document.body.classList.remove("is-locked");
+    $("page").classList.add("is-open");
+    $("page").removeAttribute("inert");
+    $("page").removeAttribute("aria-hidden");
+
+    // The one user gesture the whole audio story hangs off.
+    startMusic();
+
+    setTimeout(buildVine, 400);
+    var n = document.querySelector(".open__name");
+    if (n) { n.setAttribute("tabindex", "-1"); n.focus({ preventScroll: true }); }
   }
 
-  // The music control must never sit on top of the entry gate.
-  function revealMusic() {
-    if (state.gateOpen) $("music").hidden = false;
+  /* ---- music: full track, on repeat -------------------------------------- */
+  function initMusic() {
+    var id = CONTENT.music.youTubeId;
+    if (!id) return;
+    window.onYouTubeIframeAPIReady = function () {
+      state.yt = new YT.Player("ytHost", {
+        videoId: id,
+        playerVars: {
+          autoplay: 0, controls: 0, playsinline: 1,
+          loop: 1, playlist: id,          // `playlist` is what makes loop work
+          modestbranding: 1, rel: 0
+        },
+        events: {
+          onReady: function () { if (state.unlocked) startMusic(); },
+          onStateChange: function (e) {
+            if (e.data === YT.PlayerState.PLAYING) { setPlayUI(true); $("music").hidden = false; }
+            if (e.data === YT.PlayerState.PAUSED)  setPlayUI(false);
+            // belt and braces: loop=1 is unreliable, so restart on end too
+            if (e.data === YT.PlayerState.ENDED) { try { state.yt.playVideo(); } catch (x) {} }
+          }
+        }
+      });
+    };
+    var s = document.createElement("script");
+    s.src = "https://www.youtube.com/iframe_api";
+    s.async = true;
+    document.head.appendChild(s);
   }
 
-  function setPlayingUI(playing) {
-    state.playing = playing;
-    var btn = $("musicBtn");
-    btn.setAttribute("aria-pressed", playing ? "false" : "true");
-    btn.setAttribute("aria-label", playing ? "Pause music" : "Play music");
-    $("musicLabel").textContent = playing ? CONTENT.music.label : "Play";
+  function startMusic() {
+    if (!state.yt || !state.yt.playVideo) return;
+    try { state.yt.setVolume(100); state.yt.playVideo(); } catch (e) {}
+    // Cross-origin frames don't inherit our tap, so surface the control if
+    // playback never actually begins.
+    setTimeout(function () { $("music").hidden = false; }, 1800);
+  }
+
+  function setPlayUI(on) {
+    state.playing = on;
+    var b = $("musicBtn");
+    b.setAttribute("aria-pressed", on ? "false" : "true");
+    b.setAttribute("aria-label", on ? "Pause music" : "Play music");
+    $("musicLabel").textContent = on ? CONTENT.music.label : "Play";
   }
 
   function initMusicButton() {
     $("musicBtn").addEventListener("click", function () {
-      if (state.spotify) {
-        try { state.spotify.togglePlay(); return; } catch (e) { /* fall through */ }
-      }
-      var f = document.getElementById("spotifyFallback");
-      if (f) f.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+      if (!state.yt) return;
+      try { state.playing ? state.yt.pauseVideo() : state.yt.playVideo(); } catch (e) {}
     });
   }
 
-  /* ---------------------------------------------------------------- gate -- */
-
-  function initGate() {
-    $("gateLine").textContent = CONTENT.gate.line;
-    $("gateBtn").textContent  = CONTENT.gate.button;
-    $("gateNote").textContent = CONTENT.gate.note || "";
-
-    var page = $("page");
-    page.setAttribute("inert", "");
-    page.setAttribute("aria-hidden", "true");
-
-    $("gateBtn").addEventListener("click", function () {
-      state.gateOpen = true;
-      revealMusic();
-      $("gate").classList.add("is-open");
-      document.body.classList.remove("is-gated");
-      page.removeAttribute("inert");
-      page.removeAttribute("aria-hidden");
-      page.classList.add("is-revealed");
-
-      // The single user gesture. Ask Spotify to start inside the handler,
-      // which is the only moment a browser will even consider it.
-      if (state.spotify) {
-        try { state.spotify.play(); } catch (e) { /* ignore */ }
-      }
-
-      // Cross-origin iframes do not inherit our user activation, and iOS
-      // Safari is the strictest case, so assume it may not have started and
-      // point her at the real play button if we never see playback begin.
-      setTimeout(function () {
-        if (!state.sawPlayback) nudgeToPlayer();
-      }, 2200);
-
-      var h1 = document.querySelector(".hero__name");
-      if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
-    }, { once: true });
-  }
-
-  function nudgeToPlayer() {
-    var m = $("music");
-    if (m.hidden) return;
-    var note = document.getElementById("musicNudge");
-    if (note) return;
-    note = el("span", null, CONTENT.music.nudge);
-    note.id = "musicNudge";
-    note.style.cssText =
-      "position:absolute;right:0;bottom:52px;white-space:nowrap;" +
-      "font-family:var(--font-ui);font-size:11px;color:var(--khaki);" +
-      "background:rgba(10,9,8,.9);border:1px solid rgba(135,83,54,.5);" +
-      "padding:7px 10px;";
-    m.style.position = "relative";
-    m.appendChild(note);
-    setTimeout(function () { if (note.parentNode) note.remove(); }, 9000);
-  }
-
-  /* ----------------------------------------------------------------- go -- */
-
-  buildHero();
+  /* ---- go ---------------------------------------------------------------- */
+  $("page").setAttribute("inert", "");
+  $("page").setAttribute("aria-hidden", "true");
+  buildLock();
+  buildOpen();
   buildLetter();
-  buildGallery();
+  buildGarden();
   buildReasons();
-  buildClosing();
+  buildClose();
   initMusic();
   initMusicButton();
-  initGate();
-  progress(0, (CONTENT.reasons.items || []).length);
-  state.typeSpeed = cssNum("--type-speed", 42);
+  state.typeSpeed = cssNum("--type-speed", 44);
 
   /* =========================================================================
-     DEV PANEL — press "d". Also opens automatically with ?dev in the URL.
-     Built lazily so the deployed page pays nothing for it until asked.
+     DEV PANEL — press "d" (or add ?dev). Esc closes.
      ========================================================================= */
-
-  var DEV_GROUPS = [
+  var GROUPS = [
     { title: "Type", items: [
-      { label: "Base font size",  v: "--fs-base",  min: 13,  max: 24,  step: 0.5,  unit: "px" },
-      { label: "Heading scale",   v: "--scale",    min: 1.05,max: 1.65,step: 0.01, unit: "" },
-      { label: "Letter-spacing",  v: "--tracking", min: -0.03,max: 0.14,step: 0.005,unit: "em" },
-      { label: "Line-height",     v: "--leading",  min: 1.2, max: 2.2, step: 0.02, unit: "" }
+      { label: "Base font size", v: "--fs-base", min: 13, max: 24, step: .5, unit: "px" },
+      { label: "Heading scale",  v: "--scale",   min: 1.05, max: 1.7, step: .01, unit: "" },
+      { label: "Letter-spacing", v: "--tracking", min: -.03, max: .14, step: .005, unit: "em" },
+      { label: "Line-height",    v: "--leading", min: 1.2, max: 2.2, step: .02, unit: "" }
     ]},
     { title: "Motion", items: [
-      { label: "Typing speed (ms/char)", v: "--type-speed",   min: 4, max: 160, step: 1, unit: "" },
-      { label: "Reveal duration",        v: "--reveal-ms",    min: 0, max: 2000,step: 25,unit: "ms" },
-      { label: "Reveal easing",          v: "--reveal-ease",  type: "select", options: [
-          "cubic-bezier(.22,.61,.36,1)", "ease", "ease-in-out", "linear",
-          "cubic-bezier(.16,1,.3,1)", "cubic-bezier(.68,-0.55,.27,1.55)" ] },
-      { label: "Crossfade duration",     v: "--crossfade-ms", min: 0, max: 4000,step: 50,unit: "ms" }
-    ]},
-    { title: "Background", items: [
-      { label: "Veil at start",     v: "--veil",             min: 0, max: 1,   step: 0.01, unit: "" },
-      { label: "Veil at end",       v: "--veil-end",         min: 0, max: 1,   step: 0.01, unit: "" },
-      { label: "Column scrim start",v: "--scrim-start",      min: 0, max: 1,   step: 0.01, unit: "" },
-      { label: "Column scrim end",  v: "--scrim-end",        min: 0, max: 1,   step: 0.01, unit: "" },
-      { label: "Vignette",          v: "--vignette",         min: 0, max: 1.4, step: 0.02, unit: "" },
-      { label: "Blur",              v: "--bg-blur",          min: 0, max: 40,  step: 1,    unit: "px" },
-      { label: "Portrait opacity",  v: "--portrait-opacity", min: 0, max: 1,   step: 0.02, unit: "" }
+      { label: "Typing speed (ms/char)", v: "--type-speed", min: 4, max: 160, step: 1, unit: "" },
+      { label: "Reveal duration", v: "--reveal-ms", min: 0, max: 2200, step: 25, unit: "ms" },
+      { label: "Reveal easing", v: "--reveal-ease", type: "select", options: [
+        "cubic-bezier(.22,.61,.36,1)", "ease", "ease-in-out", "linear",
+        "cubic-bezier(.16,1,.3,1)" ] }
     ]},
     { title: "Layout", items: [
-      { label: "Section spacing", v: "--section-gap", min: 24,  max: 220, step: 4,  unit: "px" },
-      { label: "Column width",    v: "--measure",     min: 320, max: 820, step: 10, unit: "px" }
+      { label: "Section spacing", v: "--section-gap", min: 24, max: 240, step: 4, unit: "px" },
+      { label: "Column width", v: "--measure", min: 320, max: 820, step: 10, unit: "px" },
+      { label: "Vine opacity", v: "--vine-opacity", min: 0, max: 1, step: .02, unit: "" }
     ]},
     { title: "Colour", items: [
-      { label: "Background", v: "--bg",    type: "color" },
-      { label: "Text",       v: "--cream", type: "color" },
-      { label: "Accent",     v: "--rust",  type: "color" },
-      { label: "Dim text",   v: "--khaki", type: "color" }
+      { label: "Ground",   v: "--ink",      type: "color" },
+      { label: "Rose",     v: "--rose",     type: "color" },
+      { label: "Lit petal", v: "--rose-lit", type: "color" },
+      { label: "Paper",    v: "--paper",    type: "color" },
+      { label: "Ink on paper", v: "--script-ink", type: "color" },
+      { label: "Text",     v: "--blush",    type: "color" },
+      { label: "Dim text", v: "--blush-dim", type: "color" },
+      { label: "Leaf",     v: "--leaf",     type: "color" }
     ]}
   ];
+  var panel = null;
 
-  var devPanel = null;
-
-  function hexOf(name) {
-    var raw = getComputedStyle(root).getPropertyValue(name).trim();
+  function hexOf(n) {
+    var raw = getComputedStyle(root).getPropertyValue(n).trim();
     if (/^#[0-9a-f]{6}$/i.test(raw)) return raw;
     var m = raw.match(/rgba?\(([^)]+)\)/);
     if (!m) return "#000000";
-    var p = m[1].split(",").map(function (x) { return parseInt(x, 10); });
-    return "#" + p.slice(0, 3).map(function (n) {
-      return ("0" + (n || 0).toString(16)).slice(-2);
+    return "#" + m[1].split(",").slice(0, 3).map(function (x) {
+      return ("0" + (parseInt(x, 10) || 0).toString(16)).slice(-2);
     }).join("");
   }
 
-  function buildDev() {
-    var panel = el("aside", "dev");
-    panel.id = "devPanel";
-    panel.hidden = true;
-    panel.setAttribute("aria-label", "Design tweak panel");
-
-    panel.appendChild(el("h2", null, "TWEAKS"));
-    panel.appendChild(el("p", "dev__sub",
-      "Live. Press “d” to hide. Nothing here is saved — use " +
-      "Copy CSS and paste the block into styles.css to keep it."));
-
-    DEV_GROUPS.forEach(function (g) {
-      var wrap = el("div", "dev__group");
-      wrap.appendChild(el("h3", null, g.title.toUpperCase()));
-      g.items.forEach(function (it) { wrap.appendChild(devRow(it)); });
-      panel.appendChild(wrap);
-    });
-
-    var actions = el("div", "dev__actions");
-    var copyBtn = el("button", null, "Copy CSS");
-    copyBtn.type = "button";
-    var resetBtn = el("button", null, "Reset");
-    resetBtn.type = "button";
-    var out = el("textarea", "dev__out");
-    out.readOnly = true;
-    out.hidden = true;
-
-    copyBtn.addEventListener("click", function () {
-      var css = exportCss();
-      out.hidden = false;
-      out.value = css;
-      out.focus(); out.select();
-      // navigator.clipboard is unavailable on file:// in several browsers,
-      // so the textarea is always shown as a dependable fallback.
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(css).then(function () {
-          copyBtn.textContent = "Copied ✓";
-          setTimeout(function () { copyBtn.textContent = "Copy CSS"; }, 1600);
-        }, function () {
-          copyBtn.textContent = "Select + copy below";
-          setTimeout(function () { copyBtn.textContent = "Copy CSS"; }, 2400);
-        });
-      } else {
-        copyBtn.textContent = "Select + copy below";
-        setTimeout(function () { copyBtn.textContent = "Copy CSS"; }, 2400);
-      }
-    });
-
-    resetBtn.addEventListener("click", function () {
-      DEV_GROUPS.forEach(function (g) {
-        g.items.forEach(function (it) { root.style.removeProperty(it.v); });
-      });
-      panel.remove();
-      devPanel = null;
-      state.typeSpeed = cssNum("--type-speed", 42);
-      progress(state.revealed, (CONTENT.reasons.items || []).length);
-      toggleDev();
-    });
-
-    actions.appendChild(copyBtn);
-    actions.appendChild(resetBtn);
-    actions.appendChild(out);
-    panel.appendChild(actions);
-
-    document.body.appendChild(panel);
-    return panel;
-  }
-
-  function devRow(it) {
-    var row = el("div", "dev__row");
-    var id  = "dev" + it.v.replace(/[^a-z]/gi, "");
-    var lab = el("label", null, it.label);
-    lab.htmlFor = id;
-    row.appendChild(lab);
-
-    var input, output;
-
+  function row(it) {
+    var r = el("div", "dev__row");
+    var id = "dev" + it.v.replace(/[^a-z]/gi, "");
+    var lab = el("label", null, it.label); lab.htmlFor = id; r.appendChild(lab);
+    var input, out;
     if (it.type === "color") {
-      input = el("input");
-      input.type = "color";
-      input.value = hexOf(it.v);
+      input = el("input"); input.type = "color"; input.value = hexOf(it.v);
     } else if (it.type === "select") {
       input = el("select");
-      it.options.forEach(function (o) {
-        var op = el("option", null, o);
-        op.value = o;
-        input.appendChild(op);
-      });
+      it.options.forEach(function (o) { var op = el("option", null, o); op.value = o; input.appendChild(op); });
       input.value = getComputedStyle(root).getPropertyValue(it.v).trim();
     } else {
-      input = el("input");
-      input.type = "range";
+      input = el("input"); input.type = "range";
       input.min = it.min; input.max = it.max; input.step = it.step;
       input.value = cssNum(it.v, it.min);
-      output = el("output", null, input.value + (it.unit || ""));
-      row.appendChild(output);
+      out = el("output", null, input.value + (it.unit || "")); r.appendChild(out);
     }
-
     input.id = id;
     input.addEventListener("input", function () {
       var val = (it.type === "color" || it.type === "select")
-                ? input.value
-                : input.value + (it.unit || "");
+              ? input.value : input.value + (it.unit || "");
       root.style.setProperty(it.v, val);
-      if (output) output.textContent = val;
+      if (out) out.textContent = val;
       if (it.v === "--type-speed") state.typeSpeed = parseFloat(input.value);
-      if (it.v === "--veil" || it.v === "--veil-end" || it.v === "--portrait-opacity" ||
-          it.v === "--scrim-start" || it.v === "--scrim-end") {
-        progress(state.revealed, (CONTENT.reasons.items || []).length);
+    });
+    r.appendChild(input);
+    return r;
+  }
+
+  function build() {
+    var p = el("aside", "dev"); p.id = "devPanel"; p.hidden = true;
+    p.setAttribute("aria-label", "Design tweak panel");
+    p.appendChild(el("h2", null, "TWEAKS"));
+    p.appendChild(el("p", "dev__sub",
+      "Live. Press “d” or Esc to hide. Nothing is saved — use Copy CSS " +
+      "and paste the block into styles.css to keep it."));
+    GROUPS.forEach(function (g) {
+      var w = el("div", "dev__group");
+      w.appendChild(el("h3", null, g.title.toUpperCase()));
+      g.items.forEach(function (it) { w.appendChild(row(it)); });
+      p.appendChild(w);
+    });
+    var acts = el("div", "dev__actions");
+    var copy = el("button", null, "Copy CSS"); copy.type = "button";
+    var out = el("textarea", "dev__out"); out.readOnly = true; out.hidden = true;
+    copy.addEventListener("click", function () {
+      var lines = ["/* Paste into :root in styles.css */", ":root {"];
+      GROUPS.forEach(function (g) {
+        lines.push("  /* " + g.title + " */");
+        g.items.forEach(function (it) {
+          var inline = root.style.getPropertyValue(it.v).trim();
+          lines.push("  " + it.v + ": " +
+            (inline || getComputedStyle(root).getPropertyValue(it.v).trim()) + ";");
+        });
+      });
+      lines.push("}");
+      var css = lines.join("\n");
+      out.hidden = false; out.value = css; out.focus(); out.select();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(css).then(function () {
+          copy.textContent = "Copied ✓";
+          setTimeout(function () { copy.textContent = "Copy CSS"; }, 1600);
+        }, function () {});
       }
     });
-
-    row.appendChild(input);
-    return row;
+    acts.appendChild(copy); acts.appendChild(out); p.appendChild(acts);
+    document.body.appendChild(p);
+    return p;
   }
 
-  function exportCss() {
-    var lines = ["/* Tweaked values — paste into :root in styles.css */", ":root {"];
-    DEV_GROUPS.forEach(function (g) {
-      lines.push("  /* " + g.title + " */");
-      g.items.forEach(function (it) {
-        var inline = root.style.getPropertyValue(it.v).trim();
-        var val = inline || getComputedStyle(root).getPropertyValue(it.v).trim();
-        lines.push("  " + it.v + ": " + val + ";");
-      });
-    });
-    lines.push("}");
-    return lines.join("\n");
-  }
-
-  function toggleDev() {
-    if (!devPanel) devPanel = buildDev();
-    devPanel.hidden = !devPanel.hidden;
-  }
+  function toggle() { if (!panel) panel = build(); panel.hidden = !panel.hidden; }
 
   document.addEventListener("keydown", function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     var t = e.target;
     if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" ||
               t.tagName === "SELECT" || t.isContentEditable)) return;
-    if (e.key === "d" || e.key === "D") { e.preventDefault(); toggleDev(); }
+    if (e.key === "d" || e.key === "D") { e.preventDefault(); toggle(); }
   });
-
-  // Escape always closes the panel, including from inside its own fields —
-  // otherwise the Copy CSS textarea traps you (the guard above, correctly,
-  // ignores "d" while a form field has focus).
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && devPanel && !devPanel.hidden) {
-      devPanel.hidden = true;
-      if (document.activeElement && document.activeElement.blur) {
-        document.activeElement.blur();
-      }
+    if (e.key === "Escape" && panel && !panel.hidden) {
+      panel.hidden = true;
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     }
   });
-
-  if (/[?&]dev\b/.test(location.search)) toggleDev();
+  if (/[?&]dev\b/.test(location.search)) toggle();
 
 })();

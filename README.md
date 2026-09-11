@@ -13,6 +13,7 @@ no npm install. Open `index.html` in a browser and it runs.
 | **The photos** | `photos/` + `app.js` | drop files in `photos/`, list them in `CONTENT.photos` |
 | **The song** | `app.js` | `CONTENT.music.spotifyTrackId` |
 | **The look** (permanently) | `styles.css` | the `:root` block at the top |
+| **The unlock code** | `app.js` | `CONTENT.lock.code` |
 
 You should not need to touch `index.html` at all.
 
@@ -41,19 +42,20 @@ There are five real photos in `photos/`. Replace or add to them, then update
 No audio file is bundled, deliberately — the track is copyrighted. Playback is
 an official Spotify embed.
 
-**A track id is set, but it is UNVERIFIED.** It came from a web search;
-Spotify was unreachable from the machine that built this, and "Soft Spot" has
-several releases (single, album, acoustic, live) with different ids. **Press
-play once and confirm it's the right recording before sending this to her.**
+Playback is a **YouTube** embed, not Spotify. That's what makes the full song
+possible and lets it repeat — a Spotify embed gives roughly 30 seconds unless
+the listener has Premium, and cannot be looped.
 
-To change it:
+The id in `CONTENT.music.youTubeId` is keshi — "Soft Spot" (Official Music
+Video). YouTube was unreachable from the build machine, so **play it once and
+confirm**. To change it, take the `XXXXXXXXXXX` from
+`https://www.youtube.com/watch?v=XXXXXXXXXXX`.
 
-1. Open keshi — "Soft Spot" in Spotify
-2. Share → Copy Song Link
-3. From `https://open.spotify.com/track/AbCdEf123456?si=…` take just
-   `AbCdEf123456` and paste it into `CONTENT.music.spotifyTrackId`
+## The lock
 
-Clear the id entirely and the closing section shows a TODO box instead.
+The page opens on a keypad. The code is `CONTENT.lock.code`, currently
+`180999` (18/09/99, entered as DD MM YY). This is romance, not security — the
+code sits in `app.js` and anyone can read it with View Source.
 
 ---
 

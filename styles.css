@@ -1,560 +1,490 @@
 /* ============================================================
    For Silvia
-   Palette sampled directly from the source painting:
-   86% of its saturated pixels are warm amber/brown, 13.5% rust.
-   The ground is a WARM near-black (#0a0908), not a cool one.
-   ------------------------------------------------------------
-   Every value below marked (tweak) is live-editable from the
-   dev panel (press "d") and exportable with "Copy CSS".
+   Palette sampled from the reference video: an oxblood ground
+   (#2a0003, hue 356 at full saturation), rose red, leaf green,
+   cream paper and a gold wax seal.
    ============================================================ */
 
 :root {
   /* -- colour (tweak) -- */
-  --bg:      #0a0908;   /* warm near-black, the painting's ground   */
-  --umber:   #2d1c12;   /* depth                                    */
-  --rust:    #875336;   /* accent: hairlines, focus, active rule     */
-  --khaki:   #c9b79a;   /* dim text. Lifted from the painting's #917c5d
-                           midtone: a midtone can never contrast against a
-                           midtone backdrop, and measured 1.67:1 once the
-                           veil lifted. This reads dim but stays legible.  */
-  --cream:   #eedbc2;   /* body text, the painting's own highlight   */
+  --ink:        #2a0003;   /* oxblood ground                     */
+  --ink-deep:   #160002;   /* vignette / deepest shadow          */
+  --rose:       #830006;   /* rose red                           */
+  --rose-lit:   #c2142a;   /* lit petal                          */
+  --envelope:   #710816;   /* envelope body                      */
+  --leaf:       #3c5a2a;   /* foliage                            */
+  --paper:      #e0dbd2;   /* letter paper                       */
+  --paper-dim:  #c8c0b2;   /* paper shadow                       */
+  --script-ink: #6b0d14;   /* handwriting on paper               */
+  --gold:       #c9a227;   /* wax seal                           */
+  --blush:      #f0c8cd;   /* text on the dark ground            */
+  --blush-dim:  #c9949c;   /* secondary text on dark             */
 
-  /* -- type (tweak) -- */
-  --font-display: ui-serif, "New York", "Iowan Old Style",
-                  "Palatino Linotype", Palatino, Georgia,
-                  "Times New Roman", serif;
+  /* -- type (tweak) --
+     The script face cannot be self-hosted: both Google Fonts hosts are
+     blocked from the build machine. This stack lands on Snell Roundhand
+     on iPhone and Mac, which is very close to the reference. Windows
+     gets Segoe Script; Android falls back further. */
+  --font-script: "Snell Roundhand", "Apple Chancery", "Segoe Script",
+                 "Brush Script MT", "Lucida Handwriting", cursive;
   --font-ui: system-ui, -apple-system, "Segoe UI", Roboto,
              "Helvetica Neue", Arial, sans-serif;
 
   --fs-base: 17px;
-  --scale:   1.32;
-  --tracking: 0.012em;
-  --leading:  1.82;
-
+  --scale:   1.3;
+  --tracking: 0.01em;
+  --leading:  1.75;
   --fs-sm:  calc(var(--fs-base) / var(--scale));
   --fs-lg:  calc(var(--fs-base) * var(--scale));
   --fs-xl:  calc(var(--fs-lg)   * var(--scale));
   --fs-2xl: calc(var(--fs-xl)   * var(--scale));
-  --fs-3xl: calc(var(--fs-2xl)  * var(--scale));
 
   /* -- rhythm (tweak) -- */
   --section-gap: 104px;
   --measure: 560px;
 
   /* -- motion (tweak) -- */
-  --type-speed:   52;      /* ms per character, read by JS   */
+  --type-speed:   44;      /* ms per character, read by JS */
   --reveal-ms:    900ms;
   --reveal-ease:  cubic-bezier(.22,.61,.36,1);
-  --crossfade-ms: 2200ms;
-
-  /* -- background treatment (tweak) -- */
-  --veil:       0.42;  /* starting darkness; lifts as reasons reveal   */
-  --veil-end:   0.08;  /* darkness once every reason is revealed       */
-  /* The reading column's scrim moves INVERSELY to the veil. A constant
-     scrim can't work: strong enough for the bright end state makes the
-     opening a black page, weak enough for the opening fails contrast at
-     the end. This keeps the column legible throughout while the painting
-     blooms around it. --scrim is written at runtime; edit the two ends. */
-  --scrim-start: 0.48;
-  --scrim-end:   0.70;
-  --scrim:       0.48;
-  --vignette: 0.52;
-  --bg-blur:  0px;    /* extra runtime blur; 0 by default because a
-                         pre-blurred asset does the base work, which
-                         is far cheaper on mobile GPUs              */
-  /* Her portrait crossfades behind the reasons. Kept low: against a painting
-     this busy, anything stronger reads as a smudge rather than a portrait.
-     Set to 0 to turn the layer off entirely.                              */
-  --portrait-opacity: 0.20;
+  --vine-opacity: 0.62;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html {
-  background: var(--bg);
-  -webkit-text-size-adjust: 100%;
-  overflow-x: clip;
-}
+html { background: var(--ink); overflow-x: clip; -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  font-family: var(--font-display);
+  font-family: var(--font-ui);
   font-size: var(--fs-base);
   line-height: var(--leading);
   letter-spacing: var(--tracking);
-  color: var(--cream);
-  background: transparent;
+  color: var(--blush);
+  background:
+    radial-gradient(ellipse 120% 70% at 50% 0%,  #470008 0%, transparent 60%),
+    radial-gradient(ellipse 100% 60% at 50% 100%, #3a0006 0%, transparent 60%),
+    var(--ink);
+  background-attachment: scroll;
+  min-height: 100%;
 }
+body.is-locked { overflow: hidden; height: 100%; }
 
-body.is-gated { overflow: hidden; height: 100%; }
+::selection { background: var(--rose); color: #fff; }
 
-::selection { background: var(--rust); color: var(--cream); }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 
-/* ---------- background stack ---------- */
+/* ---------- lock screen ---------- */
 
-#bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-
-.bg__layer {
-  position: absolute; inset: -2%;      /* bleed, so drift never shows an edge */
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  filter: blur(var(--bg-blur));
-  will-change: transform;
-}
-
-/* Loads immediately: 15 KB, and blur hides its low resolution entirely. */
-.bg__blur { background-image: url("assets/bg-floral-blur.jpg"); }
-
-/* The 1080px file. Deliberately NOT referenced until JS adds .is-loaded,
-   so the heavy asset is fetched only as she nears the reasons section. */
-.bg__sharp { opacity: 0; transition: opacity var(--crossfade-ms) var(--reveal-ease); }
-.bg__sharp.is-loaded {
-  background-image: url("assets/bg-floral.jpg");
-  background-image: image-set(
-    url("assets/bg-floral.webp") type("image/webp"),
-    url("assets/bg-floral.jpg")  type("image/jpeg")
-  );
-}
-
-/* Her portraits crossfade here, feathered so they sit inside the bouquet
-   rather than on top of it. */
-.bg__portraits { position: absolute; inset: 0; }
-.bg__portrait {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  mix-blend-mode: luminosity;
-  transition: opacity var(--crossfade-ms) var(--reveal-ease);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 25%, transparent 72%);
-          mask-image: radial-gradient(ellipse at 50% 40%, #000 25%, transparent 72%);
-}
-
-.bg__veil {
-  position: absolute; inset: 0;
-  background: var(--bg);
-  opacity: var(--veil);
-  transition: opacity var(--crossfade-ms) var(--reveal-ease);
-}
-
-.bg__vignette {
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 42%,
-    transparent 28%,
-    rgba(10,9,8, calc(0.55 * var(--vignette))) 70%,
-    rgba(10,9,8, calc(0.94 * var(--vignette))) 100%);
-}
-
-/* Slow drift so the bouquet reads as endless — you never reach an edge. */
-@keyframes drift {
-  0%   { transform: scale(1.06) translate3d(0,0,0); }
-  50%  { transform: scale(1.12) translate3d(-1.2%, -1.6%, 0); }
-  100% { transform: scale(1.06) translate3d(0,0,0); }
-}
-.bg__blur, .bg__sharp { animation: drift 64s ease-in-out infinite; }
-
-/* ---------- entry gate ---------- */
-
-.gate {
-  position: fixed; inset: 0; z-index: 60;
+.lock {
+  position: fixed; inset: 0; z-index: 80;
   display: grid; place-items: center;
-  padding: 32px calc(24px + env(safe-area-inset-right))
-           32px calc(24px + env(safe-area-inset-left));
-  background: rgba(10,9,8,0.58);
+  padding: 24px calc(18px + env(safe-area-inset-right))
+           24px calc(18px + env(safe-area-inset-left));
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 30%, #4d0009 0%, transparent 65%),
+    var(--ink);
   transition: opacity var(--reveal-ms) var(--reveal-ease),
               visibility var(--reveal-ms) var(--reveal-ease);
 }
-.gate.is-open { opacity: 0; visibility: hidden; pointer-events: none; }
+.lock.is-open { opacity: 0; visibility: hidden; pointer-events: none; }
 
-.gate__inner { text-align: center; max-width: 30ch; }
-
-.gate__line {
-  font-size: var(--fs-lg);
-  line-height: 1.55;
-  color: var(--cream);
-  margin: 0 0 2.2rem;
-  text-wrap: balance;
+.lock__card {
+  width: min(340px, 100%);
+  padding: 30px 24px 26px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
+  border: 1px solid rgba(240,200,205,.16);
+  border-radius: 22px;
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
 }
 
-.gate__btn {
-  font-family: var(--font-display);
-  font-size: var(--fs-base);
-  font-style: italic;
-  letter-spacing: 0.08em;
-  color: var(--cream);
-  background: transparent;
-  border: 1px solid var(--rust);
-  border-radius: 0;                 /* no soft rounded card look */
-  padding: 15px 42px;
+.lock__title {
+  font-family: var(--font-script);
+  font-size: var(--fs-xl);
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--blush);
+  margin: 0 0 6px;
+}
+.lock__hint {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: .28em;
+  color: var(--blush-dim);
+  margin: 0 0 22px;
+}
+
+.lock__slots {
+  display: flex; justify-content: center; gap: 9px;
+  margin-bottom: 26px;
+}
+.slot {
+  width: 30px; height: 34px;
+  display: grid; place-items: center;
+  border-bottom: 1.5px solid rgba(240,200,205,.28);
+  font-size: 19px; line-height: 1;
+  transition: border-color var(--reveal-ms) var(--reveal-ease);
+}
+.slot.is-filled { border-bottom-color: var(--rose-lit); }
+.slot svg { width: 19px; height: 19px; }
+.slot .sep { color: var(--blush-dim); font-family: var(--font-ui); font-size: 13px; }
+
+.lock__pad {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px;
+}
+.key {
+  font-family: var(--font-ui);
+  font-size: 21px; font-weight: 500;
+  color: var(--blush);
+  background: rgba(240,200,205,.07);
+  border: 1px solid rgba(240,200,205,.10);
+  border-radius: 999px;
+  padding: 15px 0;
+  min-height: 54px;
   cursor: pointer;
-  transition: background var(--reveal-ms) var(--reveal-ease),
-              color var(--reveal-ms) var(--reveal-ease);
-  min-height: 48px;                 /* comfortable tap target */
+  transition: background 140ms ease, transform 140ms ease;
 }
-.gate__btn:hover, .gate__btn:focus-visible { background: var(--rust); }
+.key:hover { background: rgba(240,200,205,.13); }
+.key:active { transform: scale(.95); background: rgba(194,20,42,.30); }
+.key--ghost { background: none; border-color: transparent; }
+.key--back { font-size: 17px; }
 
-.gate__note {
-  font-size: var(--fs-sm);
-  color: var(--khaki);
-  margin: 1.6rem 0 0;
-  font-style: italic;
+.lock__error {
+  font-family: var(--font-ui);
+  font-size: 12px; min-height: 1.3em;
+  color: var(--rose-lit);
+  margin: 16px 0 0;
+  opacity: 0;
+  transition: opacity 200ms ease;
 }
+.lock__error.is-on { opacity: 1; }
 
-/* ---------- page shell ---------- */
+@keyframes shake {
+  10%,90% { transform: translateX(-2px); }
+  20%,80% { transform: translateX(4px); }
+  30%,50%,70% { transform: translateX(-7px); }
+  40%,60% { transform: translateX(7px); }
+}
+.lock__card.is-wrong { animation: shake 520ms cubic-bezier(.36,.07,.19,.97); }
+
+/* ---------- the vine down the page edge ---------- */
+
+.vine {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 86px; z-index: 0; pointer-events: none;
+  opacity: var(--vine-opacity);
+  overflow: hidden;
+}
+.vine__stem {
+  position: absolute; top: 0; bottom: 0; left: 34px;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, #3c5a2a 4%, #2c4420 96%, transparent);
+  border-radius: 2px;
+}
+.vine__bit { position: absolute; left: 0; width: 86px; }
+.vine__bit svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- page ---------- */
 
 .page {
   position: relative; z-index: 1;
   max-width: var(--measure);
   margin: 0 auto;
-  padding: 0 calc(24px + env(safe-area-inset-left))
-           0 calc(24px + env(safe-area-inset-right));
+  padding: 0 calc(22px + env(safe-area-inset-right))
+           0 calc(52px + env(safe-area-inset-left));
   opacity: 0;
   transition: opacity 900ms var(--reveal-ease);
 }
-.page.is-revealed { opacity: 1; }
+.page.is-open { opacity: 1; }
 
-/* Protects glyphs locally so the painting can stay bright behind them. */
-.page { text-shadow: 0 1px 10px rgba(10,9,8,0.82), 0 0 2px rgba(10,9,8,0.65); }
+.scene { padding-block: var(--section-gap); }
+.scene--open { padding-top: calc(var(--section-gap) * 0.85); }
 
-/* Column scrim. Mandatory, not stylistic: 17% of the painting is bright
-   cream bloom, so unscrimmed text would fail contrast unpredictably.
-   Feathered at the edges — no border, no radius, no shadow. */
-.page::before {
-  content: "";
-  position: absolute; inset: 0;   /* no bleed at phone width: the column IS
-                                     the viewport, so any bleed = h-scroll */
-  z-index: -1;
-  background: rgba(10,9,8, var(--scrim));
-  transition: background-color var(--crossfade-ms) var(--reveal-ease);
-  /* Feather must finish INSIDE the 24px text padding, or the first ~36px of
-     every line sits in an under-protected ramp. 7% of 375px = 26px. */
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+/* Content arrives on scroll, per the brief. */
+.rise {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity var(--reveal-ms) var(--reveal-ease),
+              transform var(--reveal-ms) var(--reveal-ease);
 }
+.rise.is-in { opacity: 1; transform: none; }
 
-section { padding-block: var(--section-gap); }
+/* ---------- typed text ---------- */
 
-/* ---------- hero ---------- */
-
-.hero { padding-top: calc(var(--section-gap) * 0.7); }
-
-.hero__shot { margin: 0 0 2.6rem; }
-
-.hero__name {
-  font-size: var(--fs-3xl);
-  line-height: 1.05;
-  font-weight: 400;
-  letter-spacing: -0.015em;
-  margin: 0 0 0.9rem;
-}
-
-.hero__line {
-  font-size: var(--fs-base);
-  font-style: italic;
-  color: var(--khaki);
-  margin: 0;
-  text-wrap: pretty;
-}
-
-/* ---------- typed letter ---------- */
-
-.letter {
-  position: relative;
-  margin: 0;
-  font-size: var(--fs-lg);
-  line-height: var(--leading);
-  text-wrap: pretty;
-}
-/* Ghost reserves the paragraph's full height from the first frame, so the
-   page never reflows while typing. */
-.letter__ghost { visibility: hidden; }
-.letter__out   { position: absolute; inset: 0; }
+.typed { position: relative; }
+.typed__ghost { visibility: hidden; }   /* holds the height; no reflow */
+.typed__out   { position: absolute; inset: 0; }
 
 .caret {
   display: inline-block;
-  width: 1px; height: 1.05em;
-  background: var(--rust);
-  vertical-align: -0.16em;
+  width: 1.5px; height: 1em;
+  background: var(--rose-lit);
+  vertical-align: -0.14em;
   margin-left: 2px;
-  animation: blink 1.1s steps(1) infinite;
+  animation: blink 1.05s steps(1) infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
-.letter.is-done .caret { display: none; }
+.typed.is-done .caret { display: none; }
 
-.letter-skip {
-  display: inline-block;
-  margin-top: 1.8rem;
-  font-family: var(--font-display);
-  font-size: var(--fs-sm);
-  font-style: italic;
-  color: var(--khaki);
-  background: none;
-  border: 0;
-  border-bottom: 1px solid rgba(135,83,54,0.5);
-  padding: 6px 2px;
-  cursor: pointer;
-  min-height: 44px;
+/* ---------- opening ---------- */
+
+.open__env { width: min(230px, 68%); margin: 0 auto 30px; display: block; }
+.open__env svg { width: 100%; height: auto; display: block;
+                 filter: drop-shadow(0 14px 26px rgba(0,0,0,.5)); }
+
+.open__name {
+  font-family: var(--font-script);
+  font-size: var(--fs-2xl);
+  font-weight: 400;
+  line-height: 1.1;
+  text-align: center;
+  color: var(--blush);
+  margin: 0 0 14px;
 }
-.letter-skip[hidden] { display: none; }
+.open__line {
+  font-family: var(--font-script);
+  font-size: var(--fs-lg);
+  text-align: center;
+  color: var(--blush-dim);
+  margin: 0;
+}
 
-/* ---------- gallery ---------- */
+/* ---------- the letter on torn paper ---------- */
 
-.gallery { display: grid; gap: calc(var(--section-gap) * 0.55); }
-
-.shot { margin: 0; }
-
-.shot__frame {
+.paper {
   position: relative;
-  aspect-ratio: 3 / 4;          /* fallback only — JS sets each frame to its
-                                   own photo's ratio, so nothing is cropped */
+  background:
+    radial-gradient(ellipse at 30% 20%, #f2eee6 0%, transparent 55%),
+    linear-gradient(160deg, #e9e4da 0%, #ded8cc 55%, #cfc7b8 100%);
+  color: var(--script-ink);
+  padding: 42px 30px 46px;
+  clip-path: polygon(0.0% 1.0%, 3.85% 1.23%, 7.69% 2.03%, 11.54% 1.02%, 15.38% 1.12%, 19.23% 1.29%, 23.08% 0.41%, 26.92% 1.13%, 30.77% 1.39%, 34.62% 1.74%, 38.46% 0.21%, 42.31% 0.67%, 46.15% 0.2%, 50.0% 1.78%, 53.85% 1.53%, 57.69% 0.09%, 61.54% 2.16%, 65.38% 2.12%, 69.23% 1.44%, 73.08% 1.35%, 76.92% 0.35%, 80.77% 0.03%, 84.62% 1.16%, 88.46% 0.13%, 92.31% 0.42%, 96.15% 0.53%, 99.95% 0.0%, 99.26% 3.85%, 99.3% 7.69%, 98.65% 11.54%, 99.17% 15.38%, 98.98% 19.23%, 99.2% 23.08%, 98.94% 26.92%, 99.27% 30.77%, 99.55% 34.62%, 98.4% 38.46%, 98.41% 42.31%, 98.66% 46.15%, 98.87% 50.0%, 99.5% 53.85%, 99.63% 57.69%, 99.54% 61.54%, 99.89% 65.38%, 98.77% 69.23%, 99.36% 73.08%, 98.65% 76.92%, 99.38% 80.77%, 98.47% 84.62%, 98.64% 88.46%, 100.0% 92.31%, 99.66% 96.15%, 100.0% 98.0%, 96.15% 98.97%, 92.31% 97.84%, 88.46% 99.13%, 84.62% 99.84%, 80.77% 98.62%, 76.92% 98.29%, 73.08% 99.41%, 69.23% 99.81%, 65.38% 99.27%, 61.54% 97.88%, 57.69% 98.33%, 53.85% 99.74%, 50.0% 99.46%, 46.15% 99.78%, 42.31% 99.87%, 38.46% 98.25%, 34.62% 99.61%, 30.77% 98.77%, 26.92% 99.02%, 23.08% 99.58%, 19.23% 98.39%, 15.38% 99.71%, 11.54% 98.58%, 7.69% 99.74%, 3.85% 99.07%, 0.34% 100.0%, 0.43% 96.15%, 1.55% 92.31%, 1.29% 88.46%, 0.49% 84.62%, 1.42% 80.77%, 0.34% 76.92%, 0.63% 73.08%, 1.37% 69.23%, 1.03% 65.38%, 0.16% 61.54%, 1.58% 57.69%, 0.34% 53.85%, 0.41% 50.0%, 1.24% 46.15%, 0.53% 42.31%, 0.47% 38.46%, 0.12% 34.62%, 0.14% 30.77%, 0.93% 26.92%, 0.39% 23.08%, 0.96% 19.23%, 0.59% 15.38%, 0.73% 11.54%, 1.53% 7.69%, 0.77% 3.85%);
+  box-shadow: 0 22px 44px rgba(0,0,0,.46);
+  transform: rotate(-.5deg);
+}
+.paper__inner { transform: rotate(.5deg); }
+
+.paper__salutation {
+  font-family: var(--font-script);
+  font-size: var(--fs-lg);
+  margin: 0 0 18px;
+  color: var(--script-ink);
+}
+.paper__body {
+  font-family: var(--font-script);
+  font-size: var(--fs-lg);
+  line-height: 1.65;
+  margin: 0 0 22px;
+  color: var(--script-ink);
+}
+.paper__sign {
+  font-family: var(--font-script);
+  font-size: var(--fs-lg);
+  text-align: right;
+  margin: 0;
+  color: var(--script-ink);
+}
+.paper .caret { background: var(--script-ink); }
+
+/* a kiss, bottom-left of the letter */
+.paper__kiss {
+  position: absolute; left: 16px; bottom: -16px;
+  width: 54px; height: 34px;
+  background: radial-gradient(ellipse at 50% 50%, #9c1526 0%, #7a0713 60%, transparent 72%);
+  border-radius: 50% 50% 46% 46%;
+  opacity: .72;
+  transform: rotate(-11deg);
+}
+.paper__kiss::after {
+  content: ""; position: absolute; inset: 34% 8% 30%;
+  background: rgba(42,0,3,.55);
+  border-radius: 50%;
+}
+
+/* ---------- the garden: her photos as the blooms ---------- */
+
+.garden { position: relative; padding-top: 8px; }
+.garden__stem {
+  position: absolute; top: 0; bottom: 0; left: 50%;
+  width: 3px; margin-left: -1.5px;
+  background: linear-gradient(180deg, transparent, #3c5a2a 6%, #2c4420 94%, transparent);
+}
+.bloom {
+  position: relative;
+  display: grid; justify-items: center;
+  margin-bottom: 58px;
+}
+.bloom:last-child { margin-bottom: 0; }
+
+.bloom__frame {
+  position: relative;
+  width: min(208px, 62vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
   overflow: hidden;
-  background: var(--umber);
+  border: 3px solid rgba(240,200,205,.30);
+  box-shadow: 0 0 0 7px rgba(42,0,3,.85), 0 16px 34px rgba(0,0,0,.5);
+  background: var(--ink-deep);
 }
-
-.shot__frame img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  opacity: 0;
-  transition: opacity 800ms var(--reveal-ease);
+.bloom__frame img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0; transition: opacity 700ms var(--reveal-ease);
 }
-.shot__frame img.is-in { opacity: 1; }
+.bloom__frame img.is-in { opacity: 1; }
 
-.shot figcaption {
-  margin-top: 0.95rem;
-  font-size: var(--fs-sm);
-  font-style: italic;
-  color: var(--khaki);
-  line-height: 1.6;
+.bloom__leaf { position: absolute; width: 46px; height: 46px; z-index: -1; }
+.bloom__leaf svg { width: 100%; height: 100%; display: block; }
+.bloom__leaf--a { bottom: 4px; left: 50%; margin-left: -112px; transform: rotate(-36deg); }
+.bloom__leaf--b { bottom: 10px; left: 50%; margin-left: 66px; transform: rotate(30deg); }
+
+.bloom__caption {
+  font-family: var(--font-script);
+  font-size: var(--fs-lg);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--blush);
+  margin: 20px 0 0;
+  max-width: 30ch;
 }
 
 /* ---------- reasons ---------- */
 
-.reasons__intro {
-  font-size: var(--fs-sm);
-  font-style: italic;
-  color: var(--khaki);
-  margin: 0 0 2.2rem;
+.reasons__title {
+  font-family: var(--font-script);
+  font-size: var(--fs-xl);
+  text-align: center;
+  color: var(--blush);
+  margin: 0 0 34px;
 }
-
 .reason {
-  display: block;
-  width: 100%;
-  text-align: left;
-  font-family: var(--font-display);
+  display: block; width: 100%;
+  text-align: center;
+  font-family: var(--font-script);
   font-size: var(--fs-lg);
-  line-height: var(--leading);
-  letter-spacing: var(--tracking);
-  color: var(--cream);
+  line-height: 1.55;
+  color: var(--blush);
   background: none;
   border: 0;
-  border-top: 1px solid rgba(238,219,194,0.13);
-  border-left: 2px solid transparent;
-  padding: 26px 0 26px 20px;
+  border-top: 1px solid rgba(240,200,205,.14);
+  padding: 26px 6px;
   margin: 0;
-  cursor: pointer;
-  transition: opacity var(--reveal-ms) var(--reveal-ease),
-              border-color var(--reveal-ms) var(--reveal-ease),
-              padding-left var(--reveal-ms) var(--reveal-ease);
 }
-.reasons .reason:last-of-type { border-bottom: 1px solid rgba(238,219,194,0.13); }
-
-.reason__hint {
-  font-size: var(--fs-sm);
-  font-style: italic;
-  color: var(--khaki);
-}
-
-/* NB: a class rule outranks the UA `[hidden]` rule, so `display:block`
-   here would leak every reason on load. This must stay. */
-.reason__text[hidden] { display: none; }
-
-.reason__text {
-  display: block;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity var(--reveal-ms) var(--reveal-ease),
-              transform var(--reveal-ms) var(--reveal-ease);
-}
-
-.reason[data-state="locked"] { opacity: 0.28; cursor: default; }
-/* Only the one card she can actually open invites a tap; the rest stay
-   blank, which is also what the brief asked for. */
-.reason[data-state="locked"] .reason__hint { visibility: hidden; }
-.reason[data-state="next"]   { opacity: 0.72; }
-.reason[data-state="next"]:hover { opacity: 0.95; }
-
-.reason[data-state="open"] {
-  opacity: 1;
-  cursor: default;
-  border-left-color: var(--rust);
-  padding-left: 26px;
-}
-.reason[data-state="open"] .reason__text { opacity: 1; transform: none; }
+.reasons .reason:last-of-type { border-bottom: 1px solid rgba(240,200,205,.14); }
 
 /* ---------- closing ---------- */
 
-.closing__signoff {
-  font-size: var(--fs-xl);
-  line-height: 1.4;
-  margin: 0 0 2.6rem;
-  text-wrap: balance;
+.close__q {
+  font-family: var(--font-script);
+  font-size: var(--fs-2xl);
+  line-height: 1.2;
+  text-align: center;
+  color: var(--blush);
+  margin: 0 0 34px;
 }
-
-.closing__rule {
-  width: 54px; height: 1px;
-  background: var(--rust);
-  border: 0;
-  margin: 0 0 2.2rem;
-}
-
-.closing__credit {
-  font-size: var(--fs-sm);
-  font-style: italic;
-  color: var(--khaki);
-  margin: 0 0 1.4rem;
-}
-
-.player { margin-top: 1.2rem; min-height: 80px; }
-.player iframe { display: block; width: 100%; border: 0; border-radius: 0; }
-
-.player__todo {
+.close__bow { width: min(210px, 62%); margin: 0 auto 30px; display: block; }
+.close__bow svg { width: 100%; height: auto; display: block;
+                  filter: drop-shadow(0 12px 24px rgba(0,0,0,.5)); }
+.close__credit {
   font-family: var(--font-ui);
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--khaki);
-  border: 1px dashed rgba(135,83,54,0.55);
-  padding: 14px 16px;
-}
-.player__todo code { color: var(--cream); }
-
-.closing__foot {
   font-size: var(--fs-sm);
-  color: var(--khaki);
-  opacity: 0.7;
-  margin-top: 3rem;
+  text-align: center;
+  color: var(--blush-dim);
+  margin: 0 0 10px;
+}
+.close__foot {
+  font-family: var(--font-ui);
+  font-size: var(--fs-sm);
+  text-align: center;
+  color: var(--blush-dim);
+  opacity: .72;
   padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  margin: 0;
 }
 
-/* ---------- music pill ---------- */
+/* ---------- music ---------- */
 
 .music {
   position: fixed;
-  right: calc(16px + env(safe-area-inset-right));
-  bottom: calc(16px + env(safe-area-inset-bottom));
-  z-index: 50;
+  right: calc(15px + env(safe-area-inset-right));
+  bottom: calc(15px + env(safe-area-inset-bottom));
+  z-index: 60;
 }
 .music[hidden] { display: none; }
-
 .music__btn {
   display: inline-flex; align-items: center; gap: 9px;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: var(--cream);
-  background: rgba(10,9,8,0.82);
-  border: 1px solid rgba(135,83,54,0.6);
-  padding: 11px 15px;
+  font-family: var(--font-ui); font-size: 12px; letter-spacing: .05em;
+  color: var(--blush);
+  background: rgba(22,0,2,.86);
+  border: 1px solid rgba(194,20,42,.55);
+  border-radius: 999px;
+  padding: 11px 16px; min-height: 44px;
   cursor: pointer;
-  min-height: 44px;
-  -webkit-backdrop-filter: blur(6px);
-          backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
-
 .music__icon {
-  width: 9px; height: 11px;
-  background: var(--cream);
-  /* two bars = playing (press to pause) */
+  width: 9px; height: 11px; background: var(--blush);
   -webkit-clip-path: polygon(0 0,3px 0,3px 11px,0 11px,6px 0,9px 0,9px 11px,6px 11px);
           clip-path: polygon(0 0,3px 0,3px 11px,0 11px,6px 0,9px 0,9px 11px,6px 11px);
 }
 .music__btn[aria-pressed="true"] .music__icon {
-  /* triangle = paused (press to play) */
   -webkit-clip-path: polygon(0 0, 9px 5.5px, 0 11px);
           clip-path: polygon(0 0, 9px 5.5px, 0 11px);
 }
 
-/* ---------- focus ---------- */
+/* YouTube carries the full track and loops it; it is never meant to be seen. */
+#ytHost { position: fixed; width: 1px; height: 1px; left: -9999px; top: 0;
+          opacity: .01; pointer-events: none; }
 
-:focus-visible {
-  outline: 2px solid var(--rust);
-  outline-offset: 3px;
-}
+:focus-visible { outline: 2px solid var(--rose-lit); outline-offset: 3px; }
 
-/* ---------- desktop ----------
-   Stays a phone-shaped column on a dark field. Refusing to reflow into a
-   wide layout is what keeps it from reading as a landing page. */
+/* ---------- desktop ---------- */
 @media (min-width: 700px) {
-  :root { --fs-base: 18px; --section-gap: 112px; }
-  /* -10% of a 560px column = 56px a side, so it still fits a 700px viewport */
-  .page::before { inset: 0 -10%; }
+  :root { --fs-base: 18px; --section-gap: 124px; }
+  .vine { width: 110px; }
+  .page { padding-left: calc(70px + env(safe-area-inset-left)); }
 }
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.001ms !important;
+    animation-duration: .001ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+    transition-duration: .001ms !important;
   }
-  .bg__blur, .bg__sharp { animation: none; transform: scale(1.06); }
+  .rise { opacity: 1; transform: none; }
   .caret { display: none; }
 }
 
-/* ---------- dev panel (hidden unless "d" is pressed) ---------- */
-
+/* ---------- dev panel (press "d") ---------- */
 .dev {
-  position: fixed; top: 0; right: 0; bottom: 0;
-  z-index: 100;
-  width: min(330px, 92vw);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  background: rgba(8,7,6,0.96);
-  border-left: 1px solid rgba(135,83,54,0.5);
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: #d8d2c8;
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 100;
+  width: min(320px, 92vw); overflow-y: auto;
+  background: rgba(14,0,2,.97);
+  border-left: 1px solid rgba(194,20,42,.5);
+  font-family: var(--font-ui); font-size: 12px; color: #e9dcd8;
   padding: 14px 16px calc(28px + env(safe-area-inset-bottom));
-  scrollbar-width: thin;
 }
-.dev__group:last-of-type { margin-bottom: 26px; }
 .dev[hidden] { display: none; }
-.dev h2 { font-size: 12px; letter-spacing: .1em; margin: 0 0 4px; color: #eedbc2; }
-.dev__sub { color: #8d8578; margin: 0 0 16px; line-height: 1.5; }
+.dev h2 { font-size: 12px; letter-spacing: .1em; margin: 0 0 4px; color: var(--blush); }
+.dev__sub { color: #a08b8b; margin: 0 0 16px; line-height: 1.5; }
 .dev__group { margin-bottom: 18px; }
-.dev__group > h3 {
-  font-size: 10px; letter-spacing: .16em; color: #8d8578;
-  margin: 0 0 9px; padding-bottom: 5px;
-  border-bottom: 1px solid rgba(216,210,200,0.12);
-}
+.dev__group:last-of-type { margin-bottom: 26px; }
+.dev__group > h3 { font-size: 10px; letter-spacing: .16em; color: #a08b8b;
+  margin: 0 0 9px; padding-bottom: 5px; border-bottom: 1px solid rgba(233,220,216,.12); }
 .dev__row { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; margin-bottom: 11px; }
-.dev__row label { grid-column: 1; color: #b9b2a6; }
-.dev__row output { grid-column: 2; color: #eedbc2; font-variant-numeric: tabular-nums; }
+.dev__row label { color: #cbb7b7; }
+.dev__row output { color: var(--blush); font-variant-numeric: tabular-nums; }
 .dev__row input, .dev__row select { grid-column: 1 / -1; width: 100%; }
-.dev__row input[type="range"] { accent-color: #875336; height: 22px; }
-.dev__row input[type="color"] { height: 30px; padding: 0; border: 1px solid #3a352e; background: #14120f; }
-.dev__row select { background: #14120f; color: #d8d2c8; border: 1px solid #3a352e; padding: 5px; }
-.dev__actions {
-  display: grid; gap: 8px;
-  position: sticky; bottom: 0;
-  /* fully opaque + a soft top fade: at 96% the controls scrolling underneath
-     bled through and the boundary read as a glitch */
-  background: #080706;
-  padding-top: 12px;
-  margin-top: 6px;
-  box-shadow: 0 -14px 14px -8px #080706;
-}
-.dev__actions button {
-  font-family: var(--font-ui); font-size: 12px;
-  color: #eedbc2; background: #1c1712;
-  border: 1px solid #875336; padding: 10px; cursor: pointer;
-}
-.dev__actions button:hover { background: #2a2118; }
-.dev__out {
-  width: 100%; height: 130px; margin-top: 8px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px; color: #d8d2c8; background: #14120f;
-  border: 1px solid #3a352e; padding: 8px;
-}
+.dev__row input[type="range"] { accent-color: var(--rose-lit); height: 22px; }
+.dev__row input[type="color"] { height: 30px; padding: 0; border: 1px solid #3a2226; background: #1a0509; }
+.dev__row select { background: #1a0509; color: #e9dcd8; border: 1px solid #3a2226; padding: 5px; }
+.dev__actions { display: grid; gap: 8px; position: sticky; bottom: 0;
+  background: #0e0002; padding-top: 12px; margin-top: 6px;
+  box-shadow: 0 -14px 14px -8px #0e0002; }
+.dev__actions button { font-family: var(--font-ui); font-size: 12px; color: var(--blush);
+  background: #2a0710; border: 1px solid var(--rose); padding: 10px; cursor: pointer; }
+.dev__out { width: 100%; height: 130px; margin-top: 8px;
+  font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+  color: #e9dcd8; background: #1a0509; border: 1px solid #3a2226; padding: 8px; }
 .dev__out[hidden] { display: none; }

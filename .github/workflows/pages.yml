@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+# Pages on this repo is set to the "GitHub Actions" source, so this workflow
+# is what actually publishes the site. Every push to main republishes it.
+#
+# There is deliberately no `enablement: true` on configure-pages: creating a
+# Pages site is not permitted to this token, and the attempt is what failed
+# the first run. The site already exists, so it only needs reading.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

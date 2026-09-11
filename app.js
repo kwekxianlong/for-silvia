@@ -5,6 +5,10 @@
    ┌──────────────────────────────────────────────────────────────────────┐
    │  EVERYTHING YOU NEED TO EDIT IS IN THE `CONTENT` OBJECT BELOW.        │
    │  You should not have to touch index.html at all.                     │
+   │                                                                      │
+   │  THE WORDS BELOW ARE A DRAFT, NOT FACTS. Claude wrote them without   │
+   │  knowing either of you. The observations are invented to show the    │
+   │  register — swap each one for something that actually happened.      │
    └──────────────────────────────────────────────────────────────────────┘
    ========================================================================== */
 
@@ -12,78 +16,85 @@ const CONTENT = {
 
   /* -- 1. Entry gate ------------------------------------------------------ */
   gate: {
-    line:   "PLACEHOLDER — one line for the entry screen. Replace me.",
+    line:   "Silvia — headphones in, if you have them. There's a song attached to this.",
     button: "Open",
-    note:   "Turn your sound on"
+    note:   "It starts with sound"
   },
 
   /* -- 2. Hero ------------------------------------------------------------ */
   hero: {
     name: "Silvia",
-    line: "PLACEHOLDER — one short line under her name. Replace me."
+    line: "I rewrote this more times than I'd like to admit. This is the version that's true."
   },
 
   /* -- 3. The typed letter ------------------------------------------------
-     Plain text. Keep it to a short paragraph — it types out one character
-     at a time, so long text takes a long time. At the default 42ms/char,
-     roughly 24 characters per second.                                      */
+     INVENTED — replace both observations with real ones. The shape is the
+     point: notice something small and specific rather than saying something
+     large and general. Keep it short; it types one character at a time.   */
   letter:
-    "PLACEHOLDER LETTER — replace this whole string. It types itself out " +
-    "character by character when it scrolls into view, and she can tap it " +
-    "to show the rest instantly. Two or three sentences works best here; " +
-    "much more than that and the typing starts to feel like waiting.",
+    "I'm not good at this part, so here's what I've noticed instead. " +
+    "You apologise before you explain what's wrong. You laugh at your own " +
+    "jokes half a second early. You have never once made me feel like an " +
+    "inconvenience.",
 
   /* -- 4. Photos ----------------------------------------------------------
-     Drop your files in /photos and list them here.
        • photos[0] is the HERO portrait (top of the page).
        • photos[1..] fill the gallery, each with its caption.
        • All of them cycle through the background during the reasons.
-     `w` and `h` are the image's real pixel dimensions. They are written to
-     the <img> width/height attributes so the browser reserves the right
-     space and the page does not jump while photos load. They do NOT need to
-     be exact — only the RATIO matters — but closer is better.             */
+     `w` and `h` are the real pixel dimensions. They set each frame's shape,
+     so a landscape photo stays landscape instead of being cropped to fit a
+     portrait box — keep them accurate when you swap a photo in.
+     CAPTIONS ARE INVENTED. Replace them with what actually happened.      */
   photos: [
-    { src: "photos/01.jpg", w: 900, h: 1200, caption: "CAPTION 1 — replace me" },
-    { src: "photos/02.jpg", w: 900, h: 1200, caption: "CAPTION 2 — replace me" },
-    { src: "photos/03.jpg", w: 900, h: 1200, caption: "CAPTION 3 — replace me" },
-    { src: "photos/04.jpg", w: 900, h: 1200, caption: "CAPTION 4 — replace me" },
-    { src: "photos/05.jpg", w: 900, h: 1200, caption: "CAPTION 5 — replace me" },
-    { src: "photos/06.jpg", w: 900, h: 1200, caption: "CAPTION 6 — replace me" }
+    { src: "photos/01.jpg", w: 958,  h: 1280,
+      caption: "" },
+    { src: "photos/02.jpg", w: 960,  h: 1280,
+      caption: "You struck this pose unprompted, then immediately looked at the floor. Both halves are you." },
+    { src: "photos/03.jpg", w: 960,  h: 1280,
+      caption: "You walked the same stones twice so I could get it right, and said it was because you liked the garden." },
+    { src: "photos/04.jpg", w: 1280, h: 960,
+      caption: "Late, and you'd stopped performing by then. That's the version of you I like most." },
+    { src: "photos/05.jpg", w: 960,  h: 1280,
+      caption: "The light going, somewhere high up. You turned around before I asked you to." }
   ],
 
   /* -- 5. Reasons ---------------------------------------------------------
-     Add or remove freely — the page adapts to however many you list.
-     They unlock one at a time, in order.                                   */
+     INVENTED. These are written to be precise rather than sweet — each one
+     names a behaviour you could point at, not a feeling. Keep that shape
+     and put your own in.                                                  */
   reasons: {
-    intro: "PLACEHOLDER — one line introducing the reasons. Replace me.",
+    intro: "Five of them. One at a time — they aren't meant to be skimmed.",
     hint:  "tap to open",
     items: [
-      "REASON 1 — replace me",
-      "REASON 2 — replace me",
-      "REASON 3 — replace me",
-      "REASON 4 — replace me",
-      "REASON 5 — replace me"
+      "You're kind in the way that costs something. The kind that rearranges your own day.",
+      "You ask the second question. Most people stop at the first and wait for their turn to talk.",
+      "You have never made me smaller so that you could feel bigger. I didn't know how rare that was until I had it.",
+      "You're honest about the unflattering things, which is the reason I believe you about the rest.",
+      "You do the thing that frightens you, and then don't mention that it frightened you."
     ]
   },
 
   /* -- 6. Closing --------------------------------------------------------- */
   closing: {
-    signoff: "PLACEHOLDER SIGN-OFF — replace me.",
+    signoff: "Happy birthday, Silvia. Whatever this year asks of you, I'm on your side of it.",
     credit:  "keshi — “Soft Spot”",
-    foot:    "PLACEHOLDER — small footer line, or delete me."
+    foot:    "Built over a few late nights, which was the easiest part of this."
   },
 
   /* -- Music --------------------------------------------------------------
      NO AUDIO FILE IS BUNDLED WITH THIS SITE, by design — the track is
      copyrighted. Playback is an official Spotify embed.
 
-     TO SET THE TRACK:
-       1. Open keshi — "Soft Spot" in Spotify.
-       2. Share → Copy Song Link.
-       3. From  https://open.spotify.com/track/AbCdEf123456?si=...
-          take just the  AbCdEf123456  part and paste it below.            */
+     ⚠ THE ID BELOW IS UNVERIFIED. It came from a web search; Spotify itself
+     was unreachable from the machine that wrote this, and "Soft Spot" has
+     several releases (single, album, acoustic, live) with different ids.
+     PRESS PLAY ONCE AND CHECK IT IS THE RIGHT RECORDING before you send
+     this to her.
+
+     To replace it: Spotify → Share → Copy Song Link, then take the id
+     between /track/ and the "?".                                         */
   music: {
-    spotifyTrackId: "PASTE_SPOTIFY_TRACK_ID_HERE",
+    spotifyTrackId: "2aL4lMGhWdPpyPL6COPou7",
     label:  "Music",
     nudge:  "Tap play below to start the song"
   }
@@ -108,6 +119,7 @@ const CONTENT = {
     visible:   "B",     // which portrait layer is currently shown
     portraitIndex: -1,
     spotify:   null,
+    gateOpen:  false,
     playing:   false,
     sawPlayback: false
   };
@@ -132,6 +144,7 @@ const CONTENT = {
     if (p) {
       var fig = el("figure", "hero__shot");
       var frame = el("div", "shot__frame");
+      frame.style.aspectRatio = p.w + " / " + p.h;
       var img = new Image();
       img.src = p.src;
       img.width = p.w; img.height = p.h;     // reserves space, prevents jump
@@ -222,6 +235,7 @@ const CONTENT = {
     CONTENT.photos.slice(1).forEach(function (p) {
       var fig = el("figure", "shot");
       var frame = el("div", "shot__frame");
+      frame.style.aspectRatio = p.w + " / " + p.h;
       var img = new Image();
       img.src = p.src;
       img.width = p.w; img.height = p.h;
@@ -398,7 +412,7 @@ const CONTENT = {
         }, function (controller) {
           settled = true;
           state.spotify = controller;
-          $("music").hidden = false;
+          revealMusic();
 
           controller.addListener("playback_update", function (e) {
             if (!e || !e.data) return;
@@ -437,8 +451,13 @@ const CONTENT = {
     f.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
     player.appendChild(f);
     // No controller available, so the pill scrolls to the player instead.
-    $("music").hidden = false;
+    revealMusic();
     $("musicLabel").textContent = "Player";
+  }
+
+  // The music control must never sit on top of the entry gate.
+  function revealMusic() {
+    if (state.gateOpen) $("music").hidden = false;
   }
 
   function setPlayingUI(playing) {
@@ -471,6 +490,8 @@ const CONTENT = {
     page.setAttribute("aria-hidden", "true");
 
     $("gateBtn").addEventListener("click", function () {
+      state.gateOpen = true;
+      revealMusic();
       $("gate").classList.add("is-open");
       document.body.classList.remove("is-gated");
       page.removeAttribute("inert");

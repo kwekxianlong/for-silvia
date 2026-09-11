@@ -28,8 +28,8 @@
 
   --fs-base: 17px;
   --scale:   1.32;
-  --tracking: 0.005em;
-  --leading:  1.72;
+  --tracking: 0.012em;
+  --leading:  1.82;
 
   --fs-sm:  calc(var(--fs-base) / var(--scale));
   --fs-lg:  calc(var(--fs-base) * var(--scale));
@@ -38,31 +38,34 @@
   --fs-3xl: calc(var(--fs-2xl)  * var(--scale));
 
   /* -- rhythm (tweak) -- */
-  --section-gap: 92px;
+  --section-gap: 104px;
   --measure: 560px;
 
   /* -- motion (tweak) -- */
-  --type-speed:   42;      /* ms per character, read by JS   */
-  --reveal-ms:    700ms;
+  --type-speed:   52;      /* ms per character, read by JS   */
+  --reveal-ms:    900ms;
   --reveal-ease:  cubic-bezier(.22,.61,.36,1);
-  --crossfade-ms: 1500ms;
+  --crossfade-ms: 2200ms;
 
   /* -- background treatment (tweak) -- */
-  --veil:       0.50;  /* starting darkness; lifts as reasons reveal   */
-  --veil-end:   0.12;  /* darkness once every reason is revealed       */
+  --veil:       0.42;  /* starting darkness; lifts as reasons reveal   */
+  --veil-end:   0.08;  /* darkness once every reason is revealed       */
   /* The reading column's scrim moves INVERSELY to the veil. A constant
      scrim can't work: strong enough for the bright end state makes the
      opening a black page, weak enough for the opening fails contrast at
      the end. This keeps the column legible throughout while the painting
      blooms around it. --scrim is written at runtime; edit the two ends. */
-  --scrim-start: 0.40;
+  --scrim-start: 0.48;
   --scrim-end:   0.70;
-  --scrim:       0.40;
+  --scrim:       0.48;
   --vignette: 0.52;
   --bg-blur:  0px;    /* extra runtime blur; 0 by default because a
                          pre-blurred asset does the base work, which
                          is far cheaper on mobile GPUs              */
-  --portrait-opacity: 0.42;
+  /* Her portrait crossfades behind the reasons. Kept low: against a painting
+     this busy, anything stronger reads as a smudge rather than a portrait.
+     Set to 0 to turn the layer off entirely.                              */
+  --portrait-opacity: 0.20;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -158,7 +161,7 @@ body.is-gated { overflow: hidden; height: 100%; }
   display: grid; place-items: center;
   padding: 32px calc(24px + env(safe-area-inset-right))
            32px calc(24px + env(safe-area-inset-left));
-  background: rgba(10,9,8,0.78);
+  background: rgba(10,9,8,0.58);
   transition: opacity var(--reveal-ms) var(--reveal-ease),
               visibility var(--reveal-ms) var(--reveal-ease);
 }
@@ -303,8 +306,8 @@ section { padding-block: var(--section-gap); }
 
 .shot__frame {
   position: relative;
-  aspect-ratio: 3 / 4;          /* box is fixed, so huge phone photos crop
-                                   rather than blowing up the layout */
+  aspect-ratio: 3 / 4;          /* fallback only — JS sets each frame to its
+                                   own photo's ratio, so nothing is cropped */
   overflow: hidden;
   background: var(--umber);
 }

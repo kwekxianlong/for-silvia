@@ -18,7 +18,8 @@ You should not need to touch `index.html` at all.
 
 ### Photos
 
-Replace `photos/01.jpg` … `06.jpg` with hers. Then in `CONTENT.photos`:
+There are five real photos in `photos/`. Replace or add to them, then update
+`CONTENT.photos`:
 
 ```js
 { src: "photos/01.jpg", w: 900, h: 1200, caption: "..." }
@@ -40,12 +41,19 @@ Replace `photos/01.jpg` … `06.jpg` with hers. Then in `CONTENT.photos`:
 No audio file is bundled, deliberately — the track is copyrighted. Playback is
 an official Spotify embed.
 
+**A track id is set, but it is UNVERIFIED.** It came from a web search;
+Spotify was unreachable from the machine that built this, and "Soft Spot" has
+several releases (single, album, acoustic, live) with different ids. **Press
+play once and confirm it's the right recording before sending this to her.**
+
+To change it:
+
 1. Open keshi — "Soft Spot" in Spotify
 2. Share → Copy Song Link
 3. From `https://open.spotify.com/track/AbCdEf123456?si=…` take just
    `AbCdEf123456` and paste it into `CONTENT.music.spotifyTrackId`
 
-Until you do, the closing section shows a visible TODO box instead of a player.
+Clear the id entirely and the closing section shows a TODO box instead.
 
 ---
 
@@ -146,4 +154,4 @@ Drag the whole folder onto [Netlify Drop](https://app.netlify.com/drop), or
   shows everything directly.
 - Text contrast was measured against the brightest 0.1% of background pixels
   under the text column, in both the opening and fully-revealed states:
-  body text 7.1:1 / 8.4:1, dim text 4.9:1 / 5.8:1. All pass WCAG AA.
+  body text 6.7:1 / 7.2:1, dim text 4.6:1 / 5.0:1. All pass WCAG AA.
